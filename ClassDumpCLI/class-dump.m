@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
         
         // 添加新的参数
         if (new_argc < 10) {
-            new_argv[new_argc++] = strdup("/Volumes/Generic/Temp/System/Library/PrivateFrameworks/AAAFoundation.framework/Versions/A/AAAFoundation");
+            new_argv[new_argc++] = strdup("/Users/jh/Desktop/Libraries/DyldLibraries/System/Library/Frameworks/CoreDisplay.framework/Versions/A/CoreDisplay");
         }
         argv = new_argv;
         argc = 2;

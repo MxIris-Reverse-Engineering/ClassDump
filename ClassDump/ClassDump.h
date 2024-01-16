@@ -89,11 +89,6 @@ FOUNDATION_EXPORT const unsigned char ClassDumpVersionString[];
 #import <ClassDump/CDTypeName.h>
 #import <ClassDump/CDTypeParser.h>
 #import <ClassDump/CDVisitorPropertyState.h>
-#import <ClassDump/NSData+Flip.h>
-#import <ClassDump/ULEB128.h>
-#import <ClassDump/blowfish.h>
-#import <ClassDump/cd_objc2.h>
-#import <ClassDump/ext.h>
 
 
 
