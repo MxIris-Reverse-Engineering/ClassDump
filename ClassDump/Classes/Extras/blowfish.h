@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 See blowfish.c for more information about this file.
 */
 
+#import <Foundation/Foundation.h>
+
 #ifndef BLOWFISH_H
 #define BLOWFISH_H
 #include <inttypes.h>

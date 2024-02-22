@@ -1,3 +1,4 @@
 .DS_Store
 /ClassDump.xcodeproj/project.xcworkspace
 /ClassDump.xcodeproj/xcuserdata
+.swiftpm

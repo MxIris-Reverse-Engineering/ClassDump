@@ -15,17 +15,17 @@
 #include <stdlib.h>
 #include <mach-o/arch.h>
 
-#import <ClassDump/CDExtensions.h>
+#import "CDExtensions.h"
 
-#import <ClassDump/CDClassDump.h>
-#import <ClassDump/CDFindMethodVisitor.h>
-#import <ClassDump/CDClassDumpVisitor.h>
-#import <ClassDump/CDMultiFileVisitor.h>
-#import <ClassDump/CDFile.h>
-#import <ClassDump/CDMachOFile.h>
-#import <ClassDump/CDFatFile.h>
-#import <ClassDump/CDFatArch.h>
-#import <ClassDump/CDSearchPathState.h>
+#import "CDClassDump.h"
+#import "CDFindMethodVisitor.h"
+#import "CDClassDumpVisitor.h"
+#import "CDMultiFileVisitor.h"
+#import "CDFile.h"
+#import "CDMachOFile.h"
+#import "CDFatFile.h"
+#import "CDFatArch.h"
+#import "CDSearchPathState.h"
 
 
 NS_SWIFT_NAME(ClassDumpManager)

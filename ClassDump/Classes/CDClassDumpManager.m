@@ -5,9 +5,9 @@
 //  Created by Kevin Bradley on 6/21/22.
 //
 
-#import <ClassDump/CDClassDumpManager.h>
-#import <ClassDump/CDClassDump.h>
-
+#import "CDClassDumpManager.h"
+#import "CDClassDump.h"
+#import "ClassDumpUtils.h"
 @implementation CDClassDumpManager
 
 + (id)sharedManager {

@@ -26,6 +26,8 @@
 // Result is: 0x056be8
 // So... 24 bits to encode 64 bits
 
+#import <Foundation/Foundation.h>
+
 uint64_t read_uleb128(const uint8_t **ptrptr, const uint8_t *end);
 
 int64_t read_sleb128(const uint8_t **ptrptr, const uint8_t *end);

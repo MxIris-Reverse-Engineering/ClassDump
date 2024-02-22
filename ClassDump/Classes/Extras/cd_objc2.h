@@ -1,3 +1,5 @@
+#import <Foundation/Foundation.h>
+
 struct cd_objc2_list_header {
     uint32_t entsize;
     uint32_t count;

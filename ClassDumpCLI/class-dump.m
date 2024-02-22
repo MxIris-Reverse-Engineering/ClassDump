@@ -4,8 +4,8 @@
 //  Copyright (C) 1997-2019 Steve Nygard.
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
-    #import <ClassDump/CDExtensions.h>
-    #import <ClassDump/CDClassDump.h>
+    #import "CDExtensions.h"
+    #import "CDClassDump.h"
     #define DLog(format, ...) CFShow((__bridge CFStringRef)[NSString stringWithFormat:format, ## __VA_ARGS__]);
     #define CAUGHT_EXCEPTION_LOG DLog(@"exception caught: %@", exception);
     #define CDLLog(L, format, ...) [CDClassDump logLevel:L stringWithFormat:format, ## __VA_ARGS__]
@@ -34,19 +34,19 @@
 #include <stdlib.h>
 #include <mach-o/arch.h>
 
-#import <ClassDump/NSString-CDExtensions.h>
+#import "NSString-CDExtensions.h"
 
-#import <ClassDump/CDClassDump.h>
-#import <ClassDump/CDFindMethodVisitor.h>
-#import <ClassDump/CDClassDumpVisitor.h>
-#import <ClassDump/CDMultiFileVisitor.h>
-#import <ClassDump/CDFile.h>
-#import <ClassDump/CDMachOFile.h>
-#import <ClassDump/CDFatFile.h>
-#import <ClassDump/CDFatArch.h>
-#import <ClassDump/CDSearchPathState.h>
+#import "CDClassDump.h"
+#import "CDFindMethodVisitor.h"
+#import "CDClassDumpVisitor.h"
+#import "CDMultiFileVisitor.h"
+#import "CDFile.h"
+#import "CDMachOFile.h"
+#import "CDFatFile.h"
+#import "CDFatArch.h"
+#import "CDSearchPathState.h"
 
-
+#import <AppKit/AppKit.h>
 void print_usage(void)
 {
     fprintf(stderr,
@@ -148,10 +148,13 @@ int main(int argc, char *argv[])
         
         // 添加新的参数
         if (new_argc < 10) {
-            new_argv[new_argc++] = strdup("/Users/jh/Desktop/Libraries/DyldLibraries/System/Library/Frameworks/CoreDisplay.framework/Versions/A/CoreDisplay");
+            new_argv[new_argc++] = strdup("-H");
+            new_argv[new_argc++] = strdup("-o");
+            new_argv[new_argc++] = strdup("/Users/JH/Desktop/XcodeDump");
+            new_argv[new_argc++] = strdup("/Applications/Xcode-15.0.1.app/Contents/Frameworks/IDEKit.framework/Versions/A/IDEKit");
         }
         argv = new_argv;
-        argc = 2;
+        argc = new_argc;
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"verbose"]; //reset it every time
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"debug"];
 #ifdef DEBUG
@@ -319,7 +322,7 @@ int main(int argc, char *argv[])
                     break;
             }
         }
-
+        
         if (errorFlag) {
             print_usage();
             exit(2);
@@ -435,6 +438,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
+//        [[NSRunLoop mainRunLoop] run];
         exit(0); // avoid costly autorelease pool drain, we’re exiting anyway
     }
 }
