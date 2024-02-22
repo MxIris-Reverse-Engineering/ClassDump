@@ -8,7 +8,7 @@
 #import "CDSection.h"
 #include <mach-o/arch.h>
 #include <CommonCrypto/CommonCrypto.h>
-#include "blowfish.h"
+#include "Extras/blowfish.h"
 #include <TargetConditionals.h>
 #if !TARGET_OS_OSX
 #include <mach/arm/vm_param.h>

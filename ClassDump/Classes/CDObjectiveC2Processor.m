@@ -17,7 +17,7 @@
 #import "CDClassDump.h"
 #import "CDSymbol.h"
 #import "CDOCProperty.h"
-#import "cd_objc2.h"
+#import "Extras/cd_objc2.h"
 #import "CDProtocolUniquer.h"
 #import "CDOCClassReference.h"
 #import "CDLCChainedFixups.h"

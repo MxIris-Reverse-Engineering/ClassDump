@@ -1,4 +1,0 @@
-module ClassDump {
-    header "ClassDump.h"
-    export *
-}

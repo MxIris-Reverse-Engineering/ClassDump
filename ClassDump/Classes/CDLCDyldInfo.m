@@ -8,7 +8,7 @@
 #import "CDMachOFile.h"
 
 #import "CDLCSegment.h"
-#import "ULEB128.h"
+#import "Extras/ULEB128.h"
 #import "ClassDumpUtils.h"
 #ifdef DEBUG
 static BOOL debugBindOps = YES;

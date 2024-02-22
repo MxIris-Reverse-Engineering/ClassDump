@@ -17,10 +17,9 @@ let package = Package(
         .target(
             name: "ClassDump",
             path: "ClassDump",
-            publicHeadersPath: ".",
+            publicHeadersPath: "Classes",
             cSettings: [
-                .headerSearchPath("Classes"),
-                .headerSearchPath("Classes/Extras"),
+                .headerSearchPath("Extras"),
             ]
         ),
         .testTarget(
