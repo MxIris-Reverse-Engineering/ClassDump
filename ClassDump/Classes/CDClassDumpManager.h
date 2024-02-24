@@ -16,8 +16,8 @@ NS_SWIFT_NAME(ClassDumpManager)
 
 @property (nonatomic, strong, class, readonly) CDClassDumpManager *sharedManager NS_SWIFT_NAME(shared);
 @property (assign) BOOL verbose;
-- (NSInteger)performClassDumpOnFile:(NSString *)file withEntitlements:(BOOL)dumpEnt toFolder:(NSString *)outputPath;
-- (NSInteger)performClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath;
+- (void)performClassDumpOnFile:(NSString *)file withEntitlements:(BOOL)dumpEnt toFolder:(NSString *)outputPath error:(NSError **)error;
+- (void)performClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath error:(NSError **)error;
 - (CDClassDump *)classDumpInstanceFromFile:(NSString *)file;
 - (NSDictionary *)getFileEntitlements:(NSString *)file;
 
