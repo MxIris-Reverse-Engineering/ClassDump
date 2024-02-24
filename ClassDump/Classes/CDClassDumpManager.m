@@ -90,11 +90,11 @@
     return [[[classDump machOFiles] firstObject] entitlementsDictionary];
 }
 
-- (void)performClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath error:(NSError **)error {
+- (BOOL)performClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath error:(NSError **)error {
     return [self performClassDumpOnFile:file withEntitlements:YES toFolder:outputPath error:error];
 }
 
-- (void)performClassDumpOnFile:(NSString *)file withEntitlements:(BOOL)dumpEnt toFolder:(NSString *)outputPath error:(NSError **)error {
+- (BOOL)performClassDumpOnFile:(NSString *)file withEntitlements:(BOOL)dumpEnt toFolder:(NSString *)outputPath error:(NSError **)error {
     
     CDClassDump *classDump = [self classDumpInstanceFromFile:file];
     if (!classDump){
@@ -104,7 +104,7 @@
             NSLocalizedDescriptionKey: [NSString stringWithFormat:@"couldnt create class dump instance for file: %@", file]
         }];
         
-        return;
+        return NO;
     }
     classDump.shouldShowIvarOffsets = true; // -a
     classDump.shouldShowMethodAddresses = true; // -A
@@ -124,6 +124,7 @@
             [ent writeToFile:entPath atomically:true];
         }
     }
+    return YES;
 }
 
 - (NSInteger)oldperformClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath {
