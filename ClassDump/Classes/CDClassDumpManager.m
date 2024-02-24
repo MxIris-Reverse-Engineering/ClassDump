@@ -4,10 +4,28 @@
 //
 //  Created by Kevin Bradley on 6/21/22.
 //
-
+#import <stdio.h>
+#import <unistd.h>
+#import <string.h>
+#import <pthread.h>
+#import <unistd.h>
+#import <getopt.h>
+#import <stdlib.h>
+#import <mach-o/arch.h>
+#import "CDExtensions.h"
+#import "CDClassDump.h"
+#import "CDFindMethodVisitor.h"
+#import "CDClassDumpVisitor.h"
+#import "CDMultiFileVisitor.h"
+#import "CDFile.h"
+#import "CDMachOFile.h"
+#import "CDFatFile.h"
+#import "CDFatArch.h"
+#import "CDSearchPathState.h"
 #import "CDClassDumpManager.h"
 #import "CDClassDump.h"
 #import "ClassDumpUtils.h"
+
 @implementation CDClassDumpManager
 
 + (id)sharedManager {
