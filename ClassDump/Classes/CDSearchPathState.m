@@ -5,17 +5,16 @@
 
 #import "CDSearchPathState.h"
 #import "ClassDumpUtils.h"
+
 @interface CDSearchPathState ()
-@property (readonly) NSMutableArray *searchPathStack;
+
+@property (nonatomic, strong, readonly) NSMutableArray<NSArray<id> *> *searchPathStack;
+
 @end
 
 #pragma mark -
 
 @implementation CDSearchPathState
-{
-    NSString *_executablePath;
-    NSMutableArray *_searchPathStack;
-}
 
 - (id)init;
 {
@@ -43,7 +42,7 @@
     }
 }
 
-- (NSArray *)searchPaths;
+- (NSArray<NSArray<id> *> *)searchPaths;
 {
     NSMutableArray *result = [NSMutableArray array];
     for (NSArray *group in self.searchPathStack) {

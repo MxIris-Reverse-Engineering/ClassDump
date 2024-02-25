@@ -18,7 +18,7 @@
 
 - (NSString *)extraDescription;
 
-@property (readonly) CDMachOFile *machOFile;
+@property (readonly, weak) CDMachOFile *machOFile;
 @property (readonly) NSUInteger commandOffset;
 
 @property (nonatomic, readonly) uint32_t cmd;

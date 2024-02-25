@@ -10,7 +10,7 @@
 
 @interface CDVisitor : NSObject
 
-@property (strong) CDClassDump *classDump;
+@property (weak) CDClassDump *classDump;
 
 - (void)willBeginVisiting;
 - (void)didEndVisiting;

@@ -9,7 +9,7 @@
 #import "ClassDumpUtils.h"
 @implementation CDVisitor
 {
-    CDClassDump *_classDump;
+//    CDClassDump *_classDump;
     BOOL _shouldShowStructureSection;
     BOOL _shouldShowProtocolSection;
 }

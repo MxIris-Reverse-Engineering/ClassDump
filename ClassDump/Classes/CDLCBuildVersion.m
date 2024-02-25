@@ -47,7 +47,7 @@ static NSString *NSStringFromBuildVersionToolNotATuple(uint64_t tuple)
 @implementation CDLCBuildVersion
 {
     struct build_version_command _buildVersionCommand;
-    NSArray *_tools;
+    NSArray<NSNumber *> *_tools;
 }
 
 - (id)initWithDataCursor:(CDMachOFileDataCursor *)cursor;
@@ -98,7 +98,7 @@ static NSString *NSStringFromBuildVersionToolNotATuple(uint64_t tuple)
             _buildVersionCommand.sdk & 0xff];
 }
 
-- (NSArray *)toolStrings;
+- (NSArray<NSNumber *> *)toolStrings;
 {
     NSMutableArray *tools = [NSMutableArray array];
     // iso map

@@ -12,7 +12,7 @@
 #import "ClassDumpUtils.h"
 @implementation CDFatArch
 {
-    CDFatFile *_fatFile;
+    __weak CDFatFile *_fatFile;
     
     // This is essentially struct fat_arch, but this way our property accessors can be synthesized.
     cpu_type_t _cputype;
@@ -22,18 +22,20 @@
     uint32_t _align;
     
     CDMachOFile *_machOFile; // Lazily create this.
+    
+    __weak CDMachOFile *_machOFileFromInit;
 }
 
 - (id)initWithMachOFile:(CDMachOFile *)machOFile;
 {
     if ((self = [super init])) {
-        _machOFile = machOFile;
+        _machOFileFromInit = machOFile;
         NSParameterAssert([machOFile.data length] < 0x100000000);
         
-        _cputype    = _machOFile.cputype;
-        _cpusubtype = _machOFile.cpusubtype;
+        _cputype    = machOFile.cputype;
+        _cpusubtype = machOFile.cpusubtype;
         _offset     = 0; // Would be filled in when this is written to disk
-        _size       = (uint32_t)[_machOFile.data length];
+        _size       = (uint32_t)[machOFile.data length];
         _align      = 12; // 2**12 = 4096 (0x1000)
     }
     
@@ -101,6 +103,10 @@
 
 - (CDMachOFile *)machOFile;
 {
+    if (_machOFileFromInit) {
+        return _machOFileFromInit;
+    }
+    
     if (_machOFile == nil) {
         NSData *data = [NSData dataWithBytesNoCopy:((uint8_t *)[self.fatFile.data bytes] + self.offset) length:self.size freeWhenDone:NO];
         _machOFile = [[CDMachOFile alloc] initWithData:data filename:self.fatFile.filename searchPathState:self.fatFile.searchPathState];

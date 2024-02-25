@@ -17,20 +17,22 @@
  */
 
 #import "CDLCChainedFixups.h"
-#include <mach-o/loader.h>
-#include <mach-o/fixup-chains.h>
+
+#import <mach-o/loader.h>
+#import <mach-o/fixup-chains.h>
 #import "CDLCSegment.h"
 #import "CDLCSymbolTable.h"
 #import "CDSymbol.h"
 #import "CDLCDylib.h"
 #import "ClassDumpUtils.h"
+
 @implementation CDLCChainedFixups {
     struct linkedit_data_command _linkeditDataCommand;
     NSData *_linkeditData;
     NSUInteger _ptrSize;
-    NSMutableDictionary *_symbolNamesByAddress;
-    NSMutableDictionary *_based;
-    NSMutableDictionary *_imports;
+    NSMutableDictionary<NSNumber *, NSString *> *_symbolNamesByAddress;
+    NSMutableDictionary<NSNumber *, NSNumber *> *_based;
+    NSMutableDictionary<NSString *, NSString *> *_imports;
 }
 
 

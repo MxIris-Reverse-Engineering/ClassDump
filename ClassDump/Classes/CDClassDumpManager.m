@@ -13,7 +13,6 @@
 #import <stdlib.h>
 #import <mach-o/arch.h>
 #import "CDExtensions.h"
-#import "CDClassDump.h"
 #import "CDFindMethodVisitor.h"
 #import "CDClassDumpVisitor.h"
 #import "CDMultiFileVisitor.h"
@@ -41,9 +40,9 @@
 }
 
 - (CDClassDump *)classDumpInstanceFromFile:(NSString *)file {
-    CDClassDump *classDump = [[CDClassDump alloc] init];
     NSString *executablePath = [file executablePathForFilename];
     if (executablePath){
+        CDClassDump *classDump = [[CDClassDump alloc] init];
         classDump.searchPathState.executablePath = executablePath;
         CDFile *file = [CDFile fileWithContentsOfFile:executablePath searchPathState:classDump.searchPathState];
         if (file == nil) {
@@ -95,36 +94,38 @@
 }
 
 - (BOOL)performClassDumpOnFile:(NSString *)file withEntitlements:(BOOL)dumpEnt toFolder:(NSString *)outputPath error:(NSError **)error {
-    
-    CDClassDump *classDump = [self classDumpInstanceFromFile:file];
-    if (!classDump){
-        DLog(@"couldnt create class dump instance for file: %@", file);
-        
-        *error = [NSError errorWithDomain:NSErrorDomain_ClassDump code:-1 userInfo:@{
-            NSLocalizedDescriptionKey: [NSString stringWithFormat:@"couldnt create class dump instance for file: %@", file]
-        }];
-        
-        return NO;
-    }
-    classDump.shouldShowIvarOffsets = true; // -a
-    classDump.shouldShowMethodAddresses = true; // -A
-    [classDump processObjectiveCData];
-    [classDump registerTypes];
-    CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
-    multiFileVisitor.classDump = classDump;
-    classDump.typeController.delegate = multiFileVisitor;
-    multiFileVisitor.outputPath = outputPath;
-    [classDump recursivelyVisit:multiFileVisitor];
-    if (dumpEnt) {
-        NSString *newName = [[[[[file executablePathForFilename] lastPathComponent] stringByDeletingPathExtension] stringByAppendingString:@"-Entitlements"] stringByAppendingPathExtension:@"plist"];
-        NSString *entPath = [outputPath stringByAppendingPathComponent:newName];
-        NSDictionary *ent = [[classDump.machOFiles firstObject] entitlementsDictionary];
-        if (ent){
-            DLog(@"writing entitlements to path: %@", entPath);
-            [ent writeToFile:entPath atomically:true];
+    @autoreleasepool {
+        CDClassDump *classDump = [self classDumpInstanceFromFile:file];
+        if (!classDump){
+            DLog(@"couldnt create class dump instance for file: %@", file);
+            
+            *error = [NSError errorWithDomain:NSErrorDomain_ClassDump code:-1 userInfo:@{
+                NSLocalizedDescriptionKey: [NSString stringWithFormat:@"couldnt create class dump instance for file: %@", file]
+            }];
+            
+            return NO;
         }
+        classDump.shouldShowIvarOffsets = true; // -a
+        classDump.shouldShowMethodAddresses = false; // -A
+        classDump.verbose = self.verbose;
+        [classDump processObjectiveCData];
+        [classDump registerTypes];
+        CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
+        multiFileVisitor.classDump = classDump;
+        multiFileVisitor.outputPath = outputPath;
+        classDump.typeController.delegate = multiFileVisitor;
+        [classDump recursivelyVisit:multiFileVisitor];
+        if (dumpEnt) {
+            NSString *newName = [[[[[file executablePathForFilename] lastPathComponent] stringByDeletingPathExtension] stringByAppendingString:@"-Entitlements"] stringByAppendingPathExtension:@"plist"];
+            NSString *entPath = [outputPath stringByAppendingPathComponent:newName];
+            NSDictionary *ent = [[classDump.machOFiles firstObject] entitlementsDictionary];
+            if (ent){
+                DLog(@"writing entitlements to path: %@", entPath);
+                [ent writeToFile:entPath atomically:true];
+            }
+        }
+        return YES;
     }
-    return YES;
 }
 
 - (NSInteger)oldperformClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath {

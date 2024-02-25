@@ -14,7 +14,7 @@
 
 - (id)initWithMachOFile:(CDMachOFile *)machOFile;
 
-@property (readonly) CDMachOFile *machOFile;
+@property (readonly, weak) CDMachOFile *machOFile;
 @property (nonatomic, readonly) BOOL hasObjectiveCData;
 @property (readwrite, assign) BOOL shallow;
 

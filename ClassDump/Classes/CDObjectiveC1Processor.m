@@ -136,7 +136,7 @@ static BOOL debug = NO;
 
 @implementation CDObjectiveC1Processor
 {
-    NSMutableArray *_modules;
+    NSMutableArray<CDOCModule *> *_modules;
 }
 
 - (id)initWithMachOFile:(CDMachOFile *)machOFile;

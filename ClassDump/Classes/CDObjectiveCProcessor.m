@@ -24,7 +24,6 @@
 
 @implementation CDObjectiveCProcessor
 {
-    CDMachOFile *_machOFile;
     
     NSMutableArray *_classes;
     NSMutableDictionary *_classesByAddress;

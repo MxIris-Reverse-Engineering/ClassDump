@@ -32,7 +32,7 @@ NSString *CDNameForCPUType(cpu_type_t cputype, cpu_subtype_t cpusubtype)
     const NXArchInfo *archInfo = NXGetArchInfoFromCpuType(cputype, cpusubtype);
     if (archInfo != NULL)
         return [NSString stringWithUTF8String:archInfo->name];
-
+    
     // Special cases until the built-in function recognizes these.
     switch (cputype) {
         case CPU_TYPE_ARM: {
@@ -47,23 +47,23 @@ NSString *CDNameForCPUType(cpu_type_t cputype, cpu_subtype_t cpusubtype)
             }
             break;
         }
-
+            
         default: break;
     }
-
+    
     return [NSString stringWithFormat:@"0x%x:0x%x", cputype, cpusubtype];
 }
 
 CDArch CDArchFromName(NSString *name)
 {
     CDArch arch;
-
+    
     arch.cputype    = CPU_TYPE_ANY;
     arch.cpusubtype = 0;
-
+    
     if (name == nil)
         return arch;
-
+    
     const NXArchInfo *archInfo = NXGetArchInfoFromName([name UTF8String]);
     if (archInfo == NULL) {
         if ([name isEqualToString:@"armv7s"]) { // Not recognized in 10.8.4
@@ -92,7 +92,7 @@ CDArch CDArchFromName(NSString *name)
         arch.cputype    = archInfo->cputype;
         arch.cpusubtype = archInfo->cpusubtype;
     }
-
+    
     return arch;
 }
 
@@ -147,7 +147,7 @@ BOOL CDArchUses64BitLibraries(CDArch arch)
         _data            = data;
         _searchPathState = searchPathState;
     }
-
+    
     return self;
 }
 

@@ -15,10 +15,13 @@
 #import "CDOCMethod.h"
 //#import "CDTypeController.h"
 #import "ClassDumpUtils.h"
+
 @interface CDFindMethodVisitor ()
+
 @property (readonly) NSMutableString *resultString;
 @property (nonatomic, strong) CDOCProtocol *context;
 @property (assign) BOOL hasShownContext;
+
 @end
 
 #pragma mark -

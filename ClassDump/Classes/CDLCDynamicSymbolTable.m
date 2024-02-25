@@ -9,11 +9,12 @@
 #import "CDMachOFile.h"
 #import "CDRelocationInfo.h"
 #import "ClassDumpUtils.h"
+
 @implementation CDLCDynamicSymbolTable
 {
     struct dysymtab_command _dysymtab;
     
-    NSArray *_externalRelocationEntries;
+    NSArray<CDRelocationInfo *> *_externalRelocationEntries;
 }
 
 - (id)initWithDataCursor:(CDMachOFileDataCursor *)cursor;

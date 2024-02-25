@@ -13,7 +13,7 @@
 @property (strong) NSString *anonymousBaseName;
 @property (assign) BOOL shouldDebug;
 
-@property CDTypeController *typeController;
+@property (weak) CDTypeController *typeController;
 
 // Phase 0
 - (void)phase0RegisterStructure:(CDType *)structure usedInMethod:(BOOL)isUsedInMethod;

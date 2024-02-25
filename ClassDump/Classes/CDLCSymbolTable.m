@@ -17,11 +17,11 @@
 {
     struct symtab_command _symtabCommand;
     
-    NSArray *_symbols;
+    NSArray<CDSymbol *> *_symbols;
     NSUInteger _baseAddress;
     
-    NSDictionary *_classSymbols;
-    NSDictionary *_externalClassSymbols;
+    NSDictionary<NSString *, CDSymbol *> *_classSymbols;
+    NSDictionary<NSString *, CDSymbol *> *_externalClassSymbols;
     
     struct {
         unsigned int didFindBaseAddress:1;

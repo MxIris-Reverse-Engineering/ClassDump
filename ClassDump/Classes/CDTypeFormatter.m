@@ -26,7 +26,7 @@ static BOOL debug = NO;
 
 @implementation CDTypeFormatter
 {
-     CDTypeController *_typeController;
+    __weak CDTypeController *_typeController;
     
     NSUInteger _baseLevel;
     

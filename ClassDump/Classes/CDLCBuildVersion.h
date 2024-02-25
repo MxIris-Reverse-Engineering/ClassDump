@@ -9,5 +9,5 @@
 @interface CDLCBuildVersion : CDLoadCommand
 
 @property (nonatomic, readonly) NSString *buildVersionString;
-@property (nonatomic, readonly) NSArray *toolStrings;
+@property (nonatomic, readonly) NSArray<NSNumber *> *toolStrings;
 @end

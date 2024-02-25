@@ -14,7 +14,7 @@
 #import "ClassDumpUtils.h"
 @implementation CDFatFile
 {
-    NSMutableArray *_arches;
+    NSMutableArray<CDFatArch *> *_arches;
 }
 
 - (id)init;
@@ -136,7 +136,7 @@
     return [[self fatArchWithArch:cdarch] machOFile];
 }
 
-- (NSArray *)archNames;
+- (NSArray<NSString *> *)archNames;
 {
     NSMutableArray *archNames = [NSMutableArray array];
     for (CDFatArch *arch in self.arches)

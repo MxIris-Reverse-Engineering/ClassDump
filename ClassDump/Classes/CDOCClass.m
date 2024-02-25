@@ -15,12 +15,8 @@
 #import "CDVisitorPropertyState.h"
 #import "CDOCClassReference.h"
 #import "ClassDumpUtils.h"
-@implementation CDOCClass
-{
-    NSArray *_instanceVariables;
 
-    BOOL _isExported;
-}
+@implementation CDOCClass
 
 - (id)init;
 {

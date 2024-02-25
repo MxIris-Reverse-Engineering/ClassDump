@@ -9,20 +9,26 @@
 #import "CDLCSegment.h"
 #import "CDSection.h"
 #import "ClassDumpUtils.h"
+
+@interface CDMachOFileDataCursor ()
+
+@property (nonatomic, strong) CDMachOFile *machOFile;
+
+@end
+
 @implementation CDMachOFileDataCursor
 {
-    CDMachOFile *_machOFile;
     NSUInteger _ptrSize;
     CDByteOrder _byteOrder;
 }
 
-- (id)initWithFile:(CDMachOFile *)machOFile;
+- (instancetype)initWithFile:(CDMachOFile *)machOFile;
 {
     VerboseLog(@"initWithFile: %@", machOFile);
     return [self initWithFile:machOFile offset:0];
 }
 
-- (id)initWithFile:(CDMachOFile *)machOFile offset:(NSUInteger)offset;
+- (instancetype)initWithFile:(CDMachOFile *)machOFile offset:(NSUInteger)offset;
 {
     if (offset == 0){
         offset = 4096;
@@ -37,7 +43,7 @@
     return self;
 }
 
-- (id)initWithFile:(CDMachOFile *)machOFile address:(NSUInteger)address;
+- (instancetype)initWithFile:(CDMachOFile *)machOFile address:(NSUInteger)address;
 {
     VerboseLog(@"initWithFile: %@ address: 0x%08lx", machOFile, address);
     if ((self = [super initWithData:machOFile.data])) {
@@ -48,7 +54,7 @@
     return self;
 }
 
-- (id)initWithSection:(CDSection *)section;
+- (instancetype)initWithSection:(CDSection *)section;
 {
     if ((self = [super initWithData:[section data]])) {
         self.machOFile = section.segment.machOFile;

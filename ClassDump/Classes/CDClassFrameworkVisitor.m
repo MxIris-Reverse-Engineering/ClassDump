@@ -13,16 +13,19 @@
 #import "CDOCCategory.h"
 #import "CDOCClassReference.h"
 #import "ClassDumpUtils.h"
+
 @interface CDClassFrameworkVisitor ()
+
 @property (strong) NSString *frameworkName;
+
 @end
 
 #pragma mark -
 
 @implementation CDClassFrameworkVisitor
 {
-    NSMutableDictionary *_frameworkNamesByClassName;
-    NSMutableDictionary *_frameworkNamesByProtocolName;
+    NSMutableDictionary<NSString *, NSString *> *_frameworkNamesByClassName;
+    NSMutableDictionary<NSString *, NSString *> *_frameworkNamesByProtocolName;
     NSString *_frameworkName;
 }
 

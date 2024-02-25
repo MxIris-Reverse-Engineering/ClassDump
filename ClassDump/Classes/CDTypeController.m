@@ -17,7 +17,7 @@ static BOOL debug = NO;
 #endif
 
 @interface CDTypeController ()
-@property (readonly) CDClassDump *classDump;
+@property (readonly, weak) CDClassDump *classDump; // passed during formatting, to get at options.
 @property (readonly) CDStructureTable *structureTable;
 @property (readonly) CDStructureTable *unionTable;
 @end
@@ -26,9 +26,6 @@ static BOOL debug = NO;
 
 @implementation CDTypeController
 {
-     CDClassDump *_classDump; // passed during formatting, to get at options.
-     id <CDTypeControllerDelegate> _delegate;
-    
     CDTypeFormatter *_ivarTypeFormatter;
     CDTypeFormatter *_methodTypeFormatter;
     CDTypeFormatter *_propertyTypeFormatter;
@@ -88,7 +85,7 @@ static BOOL debug = NO;
         //[structureTable debugName:@"_CommandStackEntry"];
         //[structureTable debugName:@"_flags"];
     }
-
+    
     return self;
 }
 
@@ -124,10 +121,10 @@ static BOOL debug = NO;
 {
     if (level == 0 && typeFormatter == self.structDeclarationTypeFormatter)
         return nil;
-
+    
     if ([self shouldExpandType:structureType] == NO)
         return [self typedefNameForType:structureType];
-
+    
     return nil;
 }
 
@@ -165,7 +162,7 @@ static BOOL debug = NO;
     
     [self.structureTable appendNamedStructuresToString:resultString formatter:self.structDeclarationTypeFormatter markName:@"Named Structures"];
     [self.structureTable appendTypedefsToString:resultString        formatter:self.structDeclarationTypeFormatter markName:@"Typedef'd Structures"];
-
+    
     [self.unionTable appendNamedStructuresToString:resultString formatter:self.structDeclarationTypeFormatter markName:@"Named Unions"];
     [self.unionTable appendTypedefsToString:resultString        formatter:self.structDeclarationTypeFormatter markName:@"Typedef'd Unions"];
 }
@@ -190,16 +187,16 @@ static BOOL debug = NO;
     [self startPhase1];
     [self startPhase2];
     [self startPhase3];
-
+    
     [self generateTypedefNames];
     [self generateMemberNames];
-
+    
     if (debug) {
         NSMutableString *str = [NSMutableString string];
         [self.structureTable appendNamedStructuresToString:str formatter:self.structDeclarationTypeFormatter markName:@"Named Structures"];
         [self.unionTable     appendNamedStructuresToString:str formatter:self.structDeclarationTypeFormatter markName:@"Named Unions"];
         [str writeToFile:@"/tmp/out.struct" atomically:NO encoding:NSUTF8StringEncoding error:NULL];
-
+        
         str = [NSMutableString string];
         [self.structureTable appendTypedefsToString:str formatter:self.structDeclarationTypeFormatter markName:@"Typedef'd Structures"];
         [self.unionTable     appendTypedefsToString:str formatter:self.structDeclarationTypeFormatter markName:@"Typedef'd Unions"];
@@ -239,7 +236,7 @@ static BOOL debug = NO;
     // Structures and unions can be nested, so do phase 1 on each table before finishing the phase.
     [self.structureTable runPhase1];
     [self.unionTable     runPhase1];
-
+    
     [self.structureTable finishPhase1];
     [self.unionTable     finishPhase1];
     //DLog(@"<  %s", _cmds);
@@ -263,14 +260,14 @@ static BOOL debug = NO;
     NSUInteger maxDepth = self.structureTable.phase1_maxDepth;
     if (maxDepth < self.unionTable.phase1_maxDepth)
         maxDepth = self.unionTable.phase1_maxDepth;
-
+    
     if (debug) DLog(@"max structure/union depth is: %lu", maxDepth);
-
+    
     for (NSUInteger depth = 1; depth <= maxDepth; depth++) {
         [self.structureTable runPhase2AtDepth:depth];
         [self.unionTable     runPhase2AtDepth:depth];
     }
-
+    
     //[self.structureTable logPhase2Info];
     [self.structureTable finishPhase2];
     [self.unionTable     finishPhase2];
@@ -281,11 +278,11 @@ static BOOL debug = NO;
     // do phase2 merge on all the types from phase 0
     [self.structureTable phase2ReplacementOnPhase0];
     [self.unionTable     phase2ReplacementOnPhase0];
-
+    
     // Any info referenced by a method, or with >1 reference, gets typedef'd.
     // - Generate name hash based on full type string at this point
     // - Then fill in unnamed fields
-
+    
     // Print method/>1 ref names and typedefs
     // Go through all updated phase0_structureInfo types
     // - start merging these into a new table
@@ -295,23 +292,23 @@ static BOOL debug = NO;
     // - end result should be CDStructureInfos with counts and method reference flags
     [self.structureTable buildPhase3Exceptions];
     [self.unionTable     buildPhase3Exceptions];
-
+    
     [self.structureTable runPhase3];
     [self.unionTable     runPhase3];
-
+    
     [self.structureTable finishPhase3];
     [self.unionTable     finishPhase3];
     //[structureTable logPhase3Info];
-
+    
     // - All named structures (minus exceptions like struct _flags) get declared at the top level
     // - All anonymous structures (minus exceptions) referenced by a method
     //                                            OR references >1 time gets typedef'd at the top and referenced by typedef subsequently
     // Celebrate!
-
+    
     // Then... what do we do when printing ivars/method types?
     // CDTypeController - (BOOL)shouldExpandType:(CDType *)type;
     // CDTypeController - (NSString *)typedefNameForType:(CDType *)type;
-
+    
     //DLog(@"<  %s", _cmds);
 }
 
@@ -319,7 +316,7 @@ static BOOL debug = NO;
 {
     if (type.primitiveType == '{') return [self.structureTable phase2ReplacementForType:type];
     if (type.primitiveType == '(') return [self.unionTable     phase2ReplacementForType:type];
-
+    
     return nil;
 }
 
@@ -334,7 +331,7 @@ static BOOL debug = NO;
 {
     if (type.primitiveType == '{') return [self.structureTable phase3ReplacementForType:type];
     if (type.primitiveType == '(') return [self.unionTable     phase3ReplacementForType:type];
-
+    
     return nil;
 }
 
@@ -349,7 +346,7 @@ static BOOL debug = NO;
 {
     if (type.primitiveType == '{') return [self.structureTable shouldExpandType:type];
     if (type.primitiveType == '(') return [self.unionTable     shouldExpandType:type];
-
+    
     return NO;
 }
 
@@ -357,7 +354,7 @@ static BOOL debug = NO;
 {
     if (type.primitiveType == '{') return [self.structureTable typedefNameForType:type];
     if (type.primitiveType == '(') return [self.unionTable     typedefNameForType:type];
-
+    
     return nil;
 }
 

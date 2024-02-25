@@ -53,7 +53,7 @@ NSString *CDSegmentEncryptionTypeName(CDSegmentEncryptionType type)
     struct segment_command_64 _segmentCommand; // 64-bit, also holding 32-bit
     
     NSString *_name;
-    NSArray *_sections;
+    NSArray<CDSection *> *_sections;
     
     NSMutableData *_decryptedData;
 }

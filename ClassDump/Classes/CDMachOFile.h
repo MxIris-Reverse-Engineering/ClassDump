@@ -14,7 +14,7 @@ typedef enum : NSUInteger {
 } CDByteOrder;
 
 @class CDLCSegment;
-@class CDLCBuildVersion, CDLCDyldInfo, CDLCDylib, CDMachOFile, CDLCSymbolTable, CDLCDynamicSymbolTable, CDLCVersionMinimum, CDLCSourceVersion, CDLCChainedFixups, CDLCExportTRIEData;
+@class CDLCBuildVersion, CDLCDyldInfo, CDLCDylib, CDMachOFile, CDLCSymbolTable, CDLCDynamicSymbolTable, CDLCVersionMinimum, CDLCSourceVersion, CDLCChainedFixups, CDLCExportTRIEData, CDLoadCommand;
 
 @interface CDMachOFile : CDFile
 
@@ -29,13 +29,13 @@ typedef enum : NSUInteger {
 @property (nonatomic, readonly) cpu_type_t maskedCPUType;
 @property (nonatomic, readonly) cpu_subtype_t maskedCPUSubtype;
 
-@property (readonly) NSArray *loadCommands;
-@property (readonly) NSArray *dylibLoadCommands;
-@property (readonly) NSArray *segments;
-@property (readonly) NSArray *runPaths;
-@property (readonly) NSArray *runPathCommands;
-@property (readonly) NSArray *dyldEnvironment;
-@property (readonly) NSArray *reExportedDylibs;
+@property (readonly) NSArray<__kindof CDLoadCommand *> *loadCommands;
+@property (readonly) NSArray<__kindof CDLoadCommand *> *dylibLoadCommands;
+@property (readonly) NSArray<__kindof CDLoadCommand *> *segments;
+@property (readonly) NSArray<NSString *> *runPaths;
+@property (readonly) NSArray<__kindof CDLoadCommand *> *runPathCommands;
+@property (readonly) NSArray<__kindof CDLoadCommand *> *dyldEnvironment;
+@property (readonly) NSArray<__kindof CDLoadCommand *> *reExportedDylibs;
 
 @property (strong) CDLCSymbolTable *symbolTable;
 @property (strong) CDLCDynamicSymbolTable *dynamicSymbolTable;

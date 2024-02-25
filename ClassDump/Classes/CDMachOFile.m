@@ -32,6 +32,7 @@
 #import "CDLCChainedFixups.h"
 #import "CDLCExportTRIEData.h"
 #import "ClassDumpUtils.h"
+
 static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     switch (magic) {
         case MH_MAGIC:    return @"MH_MAGIC";
@@ -39,16 +40,20 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
         case MH_MAGIC_64: return @"MH_MAGIC_64";
         case MH_CIGAM_64: return @"MH_CIGAM_64";
     }
-
+    
     return [NSString stringWithFormat:@"0x%08x", magic];
 }
 
 @implementation CDMachOFile {
     CDByteOrder _byteOrder;
     
-    NSArray *_loadCommands;
-    NSArray *_dylibLoadCommands;
-    NSArray *_segments;
+    NSArray<CDLoadCommand *> *_loadCommands;
+    NSArray<CDLoadCommand *> *_dylibLoadCommands;
+    NSArray<CDLoadCommand *> *_segments;
+    NSArray<NSString *> *_runPaths;
+    NSArray<CDLoadCommand *> *_runPathCommands;
+    NSArray<CDLoadCommand *> *_dyldEnvironment;
+    NSArray<CDLoadCommand *> *_reExportedDylibs;
     CDLCSymbolTable *_symbolTable;
     CDLCDynamicSymbolTable *_dynamicSymbolTable;
     CDLCDyldInfo *_dyldInfo;
@@ -57,20 +62,15 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     CDLCVersionMinimum *_minVersionIOS;
     CDLCSourceVersion *_sourceVersion;
     CDLCBuildVersion *_buildVersion;
-    NSArray *_runPaths;
-    NSArray *_runPathCommands;
-    NSArray *_dyldEnvironment;
-    NSArray *_reExportedDylibs;
-
     // The parts of struct mach_header_64 pulled out so that our property accessors can be synthesized.
-	uint32_t _magic;
-	cpu_type_t _cputype;
-	cpu_subtype_t _cpusubtype;
-	uint32_t _filetype;
-	uint32_t _ncmds;
-	uint32_t _sizeofcmds;
-	uint32_t _flags;
-	uint32_t _reserved;
+    uint32_t _magic;
+    cpu_type_t _cputype;
+    cpu_subtype_t _cpusubtype;
+    uint32_t _filetype;
+    uint32_t _ncmds;
+    uint32_t _sizeofcmds;
+    uint32_t _flags;
+    uint32_t _reserved;
     
     BOOL _uses64BitABI;
 }
@@ -128,30 +128,30 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
         CDMachOFileDataCursor *fileCursor = [[CDMachOFileDataCursor alloc] initWithFile:self offset:headerOffset];
         [self _readLoadCommands:fileCursor count:_ncmds];
     }
-
+    
     return self;
 }
 
 - (void)_readLoadCommands:(CDMachOFileDataCursor *)cursor count:(uint32_t)count; {
-    NSMutableArray *loadCommands      = [[NSMutableArray alloc] init];
-    NSMutableArray *dylibLoadCommands = [[NSMutableArray alloc] init];
-    NSMutableArray *segments          = [[NSMutableArray alloc] init];
-    NSMutableArray *runPaths          = [[NSMutableArray alloc] init];
-    NSMutableArray *runPathCommands   = [[NSMutableArray alloc] init];
-    NSMutableArray *dyldEnvironment   = [[NSMutableArray alloc] init];
-    NSMutableArray *reExportedDylibs  = [[NSMutableArray alloc] init];
+    NSMutableArray<CDLoadCommand *> *loadCommands      = [[NSMutableArray alloc] init];
+    NSMutableArray<CDLoadCommand *> *dylibLoadCommands = [[NSMutableArray alloc] init];
+    NSMutableArray<CDLoadCommand *> *segments          = [[NSMutableArray alloc] init];
+    NSMutableArray<NSString *>      *runPaths          = [[NSMutableArray alloc] init];
+    NSMutableArray<CDLoadCommand *> *runPathCommands   = [[NSMutableArray alloc] init];
+    NSMutableArray<CDLoadCommand *> *dyldEnvironment   = [[NSMutableArray alloc] init];
+    NSMutableArray<CDLoadCommand *> *reExportedDylibs  = [[NSMutableArray alloc] init];
     
     for (uint32_t index = 0; index < count; index++) {
         CDLoadCommand *loadCommand = [CDLoadCommand loadCommandWithDataCursor:cursor];
         if (loadCommand != nil) {
             [loadCommands addObject:loadCommand];
-
+            
             if (loadCommand.cmd == LC_VERSION_MIN_MACOSX)                        self.minVersionMacOSX = (CDLCVersionMinimum *)loadCommand;
             if (loadCommand.cmd == LC_VERSION_MIN_IPHONEOS)                      self.minVersionIOS = (CDLCVersionMinimum *)loadCommand;
             if (loadCommand.cmd == LC_DYLD_ENVIRONMENT)                          [dyldEnvironment addObject:loadCommand];
             if (loadCommand.cmd == LC_REEXPORT_DYLIB)                            [reExportedDylibs addObject:loadCommand];
             if (loadCommand.cmd == LC_ID_DYLIB)                                  self.dylibIdentifier = (CDLCDylib *)loadCommand;
-
+            
             if ([loadCommand isKindOfClass:[CDLCSourceVersion class]])           self.sourceVersion = (CDLCSourceVersion *)loadCommand;
             else if ([loadCommand isKindOfClass:[CDLCBuildVersion class]])       self.buildVersion = (CDLCBuildVersion *)loadCommand;
             else if ([loadCommand isKindOfClass:[CDLCDylib class]])              [dylibLoadCommands addObject:loadCommand];
@@ -175,7 +175,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     _runPathCommands   = [runPathCommands copy];
     _dyldEnvironment   = [dyldEnvironment copy];
     _reExportedDylibs  = [reExportedDylibs copy];
-
+    
     for (CDLoadCommand *loadCommand in _loadCommands) {
         [loadCommand machOFileDidReadLoadCommands:self];
     }
@@ -196,7 +196,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
 - (CDMachOFile *)machOFileWithArch:(CDArch)arch; {
     if (self.cputype == arch.cputype && self.maskedCPUSubtype == (arch.cpusubtype & ~CPU_SUBTYPE_MASK))
         return self;
-
+    
     return nil;
 }
 
@@ -213,14 +213,14 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
 - (NSUInteger)ptrSize; {
     return self.uses64BitABI ? sizeof(uint64_t) : sizeof(uint32_t);
 }
-             
-// We only have one architecture, so it is by default the best match.  
+
+// We only have one architecture, so it is by default the best match.
 - (BOOL)bestMatchForArch:(CDArch *)ioArchPtr; {
     if (ioArchPtr != NULL) {
         ioArchPtr->cputype    = self.cputype;
         ioArchPtr->cpusubtype = self.cpusubtype;
     }
-
+    
     return YES;
 }
 
@@ -240,7 +240,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
         default:
             break;
     }
-
+    
     return nil;
 }
 
@@ -269,7 +269,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     if (flags & MH_SETUID_SAFE)             [setFlags addObject:@"SETUID_SAFE"];
     if (flags & MH_NO_REEXPORTED_DYLIBS)    [setFlags addObject:@"NO_REEXPORTED_DYLIBS"];
     if (flags & MH_PIE)                     [setFlags addObject:@"PIE"];
-
+    
     return [setFlags componentsJoinedByString:@" "];
 }
 
@@ -279,7 +279,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     // macho objects from iOS 9 appear to store various sections
     // in __DATA_CONST that were previously found in __DATA
     CDLCSegment *seg = [self segmentWithName:@"__DATA_CONST"];
-
+    
     // Fall back on __DATA if it is not found for earlier behavior
     if (!seg) {
         seg = [self segmentWithName:@"__DATA"];
@@ -293,7 +293,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
             return loadCommand;
         }
     }
-
+    
     return nil;
 }
 
@@ -306,7 +306,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
             return loadCommand;
         }
     }
-
+    
     return nil;
 }
 
@@ -335,10 +335,10 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
 - (NSString *)stringAtAddress:(NSUInteger)address; {
     VLOG_CMD;
     const void *ptr;
-
+    
     if (address == 0)
         return nil;
-
+    
     CDLCSegment *segment = [self segmentContainingAddress:address];
     if (segment == nil && self.chainedFixups) { //check for chain fixup rebase
         uint64_t based = [self.chainedFixups rebaseTargetFromAddress:address];
@@ -361,17 +361,17 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
         }
         
     }
-
+    
     if ([segment isProtected]) {
         NSData *d2 = [segment decryptedData];
         NSUInteger d2Offset = [segment segmentOffsetForAddress:address];
         if (d2Offset == 0)
             return nil;
-
+        
         ptr = (uint8_t *)[d2 bytes] + d2Offset;
         return [[NSString alloc] initWithBytes:ptr length:strlen(ptr) encoding:NSASCIIStringEncoding];
     }
-
+    
     NSUInteger offset = [self dataOffsetForAddress:address];
     if (offset == 0)
         return nil;
@@ -469,11 +469,11 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
             exit(5);
         }
     }
-
-//    if ([segment isProtected]) {
-//        DLog(@"Error: Segment is protected.");
-//        exit(5);
-//    }
+    
+    //    if ([segment isProtected]) {
+    //        DLog(@"Error: Segment is protected.");
+    //        exit(5);
+    //    }
     //[self logInfoForAddress:address];
 #if 0
     DLog(@"---------->");
@@ -494,67 +494,67 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
 - (uint32_t)peekInt32:(NSUInteger)offset; {
     if (_byteOrder == CDByteOrder_LittleEndian)
         return [self peekLittleInt32:offset];
-
+    
     return [self peekBigInt32:offset];
 }
 
 - (uint64_t)peekInt64:(NSUInteger)offset; {
     if (_byteOrder == CDByteOrder_LittleEndian)
         return [self peekLittleInt64:offset];
-
+    
     return [self peekBigInt64:offset];
 }
 
 
 - (uint32_t)peekBigInt32:(NSUInteger)offset; {
     uint32_t result;
-
+    
     if (offset + sizeof(result) <= [[self data] length]) {
         result = OSReadBigInt32([[self data] bytes], offset);
     } else {
         [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
         result = 0;
     }
-
+    
     return result;
 }
 
 - (uint32_t)peekLittleInt32:(NSUInteger)offset; {
     uint32_t result;
-
+    
     if (offset + sizeof(result) <= [[self data] length]) {
         result = OSReadLittleInt32([[self data] bytes], offset);
     } else {
         [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
         result = 0;
     }
-
+    
     return result;
 }
 
 - (uint64_t)peekBigInt64:(NSUInteger)offset {
     uint64_t result;
-
+    
     if (offset + sizeof(result) <= [[self data] length]) {
         result = OSReadBigInt64([[self data] bytes], offset);
     } else {
         [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
         result = 0;
     }
-
+    
     return result;
 }
 
 - (uint64_t)peekLittleInt64:(NSUInteger)offset {
     uint64_t result;
-
+    
     if (offset + sizeof(result) <= [[self data] length]) {
         result = OSReadLittleInt64([[self data] bytes], offset);
     } else {
         [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
         result = 0;
     }
-
+    
     return result;
 }
 
@@ -576,7 +576,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     if ([self filetype] == MH_DYLIB) {
         return CDImportNameForPath(self.filename);
     }
-
+    
     return nil;
 }
 
@@ -588,7 +588,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
             return YES;
         }
     }
-
+    
     return NO;
 }
 
@@ -597,7 +597,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
         if ([loadCommand isKindOfClass:[CDLCSegment class]] && [(CDLCSegment *)loadCommand isProtected])
             return YES;
     }
-
+    
     return NO;
 }
 
@@ -606,7 +606,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
         if ([loadCommand isKindOfClass:[CDLCSegment class]] && [(CDLCSegment *)loadCommand canDecrypt] == NO)
             return NO;
     }
-
+    
     return YES;
 }
 
@@ -619,7 +619,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
         [loadCommand appendToString:resultString verbose:isVerbose];
         [resultString appendString:@"\n"];
     }
-
+    
     return resultString;
 }
 
@@ -630,13 +630,13 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     // Grr, %11@ doesn't work.
     if (isVerbose)
         [resultString appendFormat:@"%11@ %7@ %10u   %8@ %5lu %10u %@\n",
-                      CDMachOFileMagicNumberDescription([self magic]), [self archName], [self cpusubtype],
-                      [self filetypeDescription], [_loadCommands count], 0, [self flagDescription]];
+         CDMachOFileMagicNumberDescription([self magic]), [self archName], [self cpusubtype],
+         [self filetypeDescription], [_loadCommands count], 0, [self flagDescription]];
     else
         [resultString appendFormat:@" 0x%08x %7u %10u   %8u %5lu %10u 0x%08x\n",
-                      [self magic], [self cputype], [self cpusubtype], [self filetype], [_loadCommands count], 0, [self flags]];
+         [self magic], [self cputype], [self cpusubtype], [self filetype], [_loadCommands count], 0, [self flags]];
     [resultString appendString:@"\n"];
-
+    
     return resultString;
 }
 
@@ -644,7 +644,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     for (CDLoadCommand *loadCommand in _loadCommands)
         if ([loadCommand isKindOfClass:[CDLCUUID class]])
             return [(CDLCUUID *)loadCommand UUID];
-
+    
     return nil;
 }
 
@@ -667,7 +667,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
                 DLog(@"Found address %016lx in segment %@, section %@", address, [segment name], [section sectionName]);
             }
         }
-
+        
         NSString *str = [self stringAtAddress:address];
         DLog(@"      address %016lx as a string: '%@' (length %lu)", address, str, [str length]);
         DLog(@"      address %016lx data offset: %lu", address, [self dataOffsetForAddress:address]);
@@ -683,11 +683,11 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     if (rinfo != nil) {
         CDSymbol *symbol = [[self.symbolTable symbols] objectAtIndex:rinfo.symbolnum];
         VerboseLog(@"symbol: %@", symbol);
-
+        
         // Now we could use GET_LIBRARY_ORDINAL(), look up the the appropriate mach-o file (being sure to have loaded them even without -r),
         // look up the symbol in that mach-o file, get the address, look up the class based on that address, and finally get the class name
         // from that.
-
+        
         // Or, we could be lazy and take advantage of the fact that the class name we're after is in the symbol name:
         NSString *str = [symbol name];
         if ([str hasPrefix:ObjCClassSymbolPrefix]) {
@@ -697,7 +697,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
             return str;
         }
     }
-
+    
     // This is fine, they might really be root objects.  NSObject, NSProxy.
     return nil;
 }
@@ -714,7 +714,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
 
 - (NSString *)externalClassNameForAddress2:(NSUInteger)address; {
     NSString *str = [self.dyldInfo symbolNameForAddress:address];
-
+    
     if (str != nil) {
         if ([str hasPrefix:ObjCClassSymbolPrefix]) {
             return [str substringFromIndex:[ObjCClassSymbolPrefix length]];
@@ -723,7 +723,7 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
             return str;
         }
     }
-
+    
     return nil;
 }
 
@@ -776,4 +776,8 @@ static NSString *CDMachOFileMagicNumberDescription(uint32_t magic) {
     return segment.vmaddr;
 }
 
+
+- (void)dealloc {
+    NSLog(@"CDMachOFile is dealloc");
+}
 @end

@@ -4,13 +4,13 @@
 //  Copyright (C) 1997-2019 Steve Nygard.
 
 #import "CDOCInstanceVariable.h"
-
 #import "CDClassDump.h"
 #import "CDTypeFormatter.h"
 #import "CDTypeParser.h"
 #import "CDTypeController.h"
 #import "CDType.h"
 #import "ClassDumpUtils.h"
+
 @interface CDOCInstanceVariable ()
 @property (assign) BOOL hasParsedType;
 @end

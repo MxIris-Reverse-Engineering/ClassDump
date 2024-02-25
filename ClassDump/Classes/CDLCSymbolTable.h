@@ -18,7 +18,7 @@
 @property (nonatomic, readonly) uint32_t strsize;
 
 @property (nonatomic, readonly) NSUInteger baseAddress;
-@property (nonatomic, readonly) NSArray *symbols;
+@property (nonatomic, readonly) NSArray<CDSymbol *> *symbols;
 
 - (CDSymbol *)symbolForClassName:(NSString *)className;
 - (CDSymbol *)symbolForExternalClassName:(NSString *)className;

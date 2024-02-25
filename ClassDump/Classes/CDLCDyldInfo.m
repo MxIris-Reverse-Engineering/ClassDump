@@ -10,6 +10,7 @@
 #import "CDLCSegment.h"
 #import "Extras/ULEB128.h"
 #import "ClassDumpUtils.h"
+
 #ifdef DEBUG
 static BOOL debugBindOps = YES;
 static BOOL debugExportedSymbols = YES;
@@ -54,7 +55,7 @@ static NSString *CDBindTypeDescription(uint8_t type)
     struct dyld_info_command _dyldInfoCommand;
     
     NSUInteger _ptrSize;
-    NSMutableDictionary *_symbolNamesByAddress;
+    NSMutableDictionary<NSNumber *, NSString *> *_symbolNamesByAddress;
 }
 
 - (id)initWithDataCursor:(CDMachOFileDataCursor *)cursor;

@@ -12,7 +12,7 @@
 
 - (id)initWithDataCursor:(CDMachOFileDataCursor *)cursor segment:(CDLCSegment *)segment;
 
-@property (readonly) CDLCSegment *segment;
+@property (readonly, weak) CDLCSegment *segment;
 
 @property (nonatomic, readonly) NSData *data;
 

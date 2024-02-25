@@ -38,7 +38,7 @@
 #import "ClassDumpUtils.h"
 @implementation CDLoadCommand
 {
-    CDMachOFile *_machOFile;
+    __weak CDMachOFile *_machOFile;
     NSUInteger _commandOffset;
 }
 

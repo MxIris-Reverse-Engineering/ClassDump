@@ -18,7 +18,7 @@ NS_SWIFT_NAME(ClassDumpManager)
 @property (assign) BOOL verbose;
 - (BOOL)performClassDumpOnFile:(NSString *)file withEntitlements:(BOOL)dumpEnt toFolder:(NSString *)outputPath error:(NSError **)error;
 - (BOOL)performClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath error:(NSError **)error;
-- (CDClassDump *)classDumpInstanceFromFile:(NSString *)file;
+- (nullable CDClassDump *)classDumpInstanceFromFile:(NSString *)file;
 - (NSDictionary *)getFileEntitlements:(NSString *)file;
 
 @end

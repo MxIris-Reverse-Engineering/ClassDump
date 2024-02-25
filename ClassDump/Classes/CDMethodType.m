@@ -8,10 +8,6 @@
 #import "CDType.h"
 #import "ClassDumpUtils.h"
 @implementation CDMethodType
-{
-    CDType *_type;
-    NSString *_offset;
-}
 
 - (id)initWithType:(CDType *)type offset:(NSString *)offset;
 {
