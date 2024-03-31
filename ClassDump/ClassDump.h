@@ -87,7 +87,7 @@ FOUNDATION_EXPORT const unsigned char ClassDumpVersionString[];
 #import "CDTypeFormatter.h"
 #import "CDTypeLexer.h"
 #import "CDTypeName.h"
-#import "CDTypeParser.h"
+//#import "CDTypeParser.h"
 #import "CDVisitorPropertyState.h"
 
 
