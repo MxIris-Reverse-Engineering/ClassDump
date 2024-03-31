@@ -12,7 +12,7 @@
 #import "CDObjectiveCProcessor.h"
 #import "CDType.h"
 #import "CDTypeFormatter.h"
-#import "CDTypeParser.h"
+#import "_CDTypeParser.h"
 #import "CDVisitor.h"
 #import "CDLCSegment.h"
 #import "CDTypeController.h"

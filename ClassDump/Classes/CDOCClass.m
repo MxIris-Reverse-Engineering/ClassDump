@@ -10,7 +10,7 @@
 #import "CDOCMethod.h"
 #import "CDType.h"
 #import "CDTypeController.h"
-#import "CDTypeParser.h"
+#import "_CDTypeParser.h"
 #import "CDVisitor.h"
 #import "CDVisitorPropertyState.h"
 #import "CDOCClassReference.h"

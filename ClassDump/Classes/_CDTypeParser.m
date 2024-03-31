@@ -3,7 +3,7 @@
 //  This file is part of class-dump, a utility for examining the Objective-C segment of Mach-O files.
 //  Copyright (C) 1997-2019 Steve Nygard.
 
-#import "CDTypeParser.h"
+#import "_CDTypeParser.h"
 
 #import "CDMethodType.h"
 #import "CDType.h"
@@ -34,12 +34,12 @@ static NSString *CDTokenDescription(int token)
     return [NSString stringWithFormat:@"%d", token];
 }
 
-@interface CDTypeParser ()
+@interface _CDTypeParser ()
 @end
 
 #pragma mark -
 
-@implementation CDTypeParser
+@implementation _CDTypeParser
 {
     CDTypeLexer *_lexer;
     int _lookahead;

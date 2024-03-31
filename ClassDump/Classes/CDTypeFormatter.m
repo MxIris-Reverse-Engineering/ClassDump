@@ -8,7 +8,7 @@
 #import "CDMethodType.h"
 #import "CDType.h"
 #import "CDTypeLexer.h"
-#import "CDTypeParser.h"
+#import "_CDTypeParser.h"
 #import "CDTypeController.h"
 #import "NSString-CDExtensions.h"
 #import "NSScanner-CDExtensions.h"
@@ -111,7 +111,7 @@ static BOOL debug = NO;
 
 - (NSDictionary *)formattedTypesForMethodName:(NSString *)name type:(NSString *)type;
 {
-    CDTypeParser *parser = [[CDTypeParser alloc] initWithString:type];
+    _CDTypeParser *parser = [[_CDTypeParser alloc] initWithString:type];
 
     NSError *error = nil;
     NSArray *methodTypes = [parser parseMethodType:&error];
@@ -190,7 +190,7 @@ static BOOL debug = NO;
 
 - (NSString *)formatMethodName:(NSString *)methodName typeString:(NSString *)typeString;
 {
-    CDTypeParser *parser = [[CDTypeParser alloc] initWithString:typeString];
+    _CDTypeParser *parser = [[_CDTypeParser alloc] initWithString:typeString];
 
     NSError *error = nil;
     NSArray *methodTypes = [parser parseMethodType:&error];

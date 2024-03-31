@@ -6,7 +6,7 @@
 #import "CDOCInstanceVariable.h"
 #import "CDClassDump.h"
 #import "CDTypeFormatter.h"
-#import "CDTypeParser.h"
+#import "_CDTypeParser.h"
 #import "CDTypeController.h"
 #import "CDType.h"
 #import "ClassDumpUtils.h"
@@ -56,7 +56,7 @@
 - (CDType *)type;
 {
     if (self.hasParsedType == NO && self.parseError == nil) {
-        CDTypeParser *parser = [[CDTypeParser alloc] initWithString:self.typeString];
+        _CDTypeParser *parser = [[_CDTypeParser alloc] initWithString:self.typeString];
         NSError *error;
         _type = [parser parseType:&error];
         if (_type == nil) {

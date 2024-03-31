@@ -18,7 +18,7 @@ extern NSString *CDErrorKey_LocalizedLongDescription;
 #define CDTypeParserCode_Default     0
 #define CDTypeParserCode_SyntaxError 1
 
-@interface CDTypeParser : NSObject
+@interface _CDTypeParser : NSObject
 
 - (id)initWithString:(NSString *)string;
 

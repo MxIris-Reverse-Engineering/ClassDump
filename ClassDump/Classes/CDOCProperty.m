@@ -5,7 +5,7 @@
 
 #import "CDOCProperty.h"
 
-#import "CDTypeParser.h"
+#import "_CDTypeParser.h"
 #import "CDTypeLexer.h"
 #import "CDType.h"
 #import "NSString-CDExtensions.h"
@@ -118,7 +118,7 @@
         NSRange typeRange;
 
         typeRange.location = [scanner scanLocation];
-        CDTypeParser *parser = [[CDTypeParser alloc] initWithString:[[scanner string] substringFromIndex:[scanner scanLocation]]];
+        _CDTypeParser *parser = [[_CDTypeParser alloc] initWithString:[[scanner string] substringFromIndex:[scanner scanLocation]]];
         _type = [parser parseType:&error];
         if (_type != nil) {
             typeRange.length = [parser.lexer.scanner scanLocation];

@@ -9,7 +9,7 @@
 #import "CDTypeName.h"
 #import "CDTypeLexer.h" // For T_NAMED_OBJECT
 #import "CDTypeFormatter.h"
-#import "CDTypeParser.h"
+#import "_CDTypeParser.h"
 #import "NSString-CDExtensions.h"
 #import "ClassDumpUtils.h"
 static BOOL debugMerge = NO;
@@ -212,7 +212,7 @@ static BOOL debugMerge = NO;
     NSString *str = [self typeString];
     NSParameterAssert(str != nil);
     
-    CDTypeParser *parser = [[CDTypeParser alloc] initWithString:str];
+    _CDTypeParser *parser = [[_CDTypeParser alloc] initWithString:str];
 
     NSError *error = nil;
     CDType *copiedType = [parser parseType:&error];
