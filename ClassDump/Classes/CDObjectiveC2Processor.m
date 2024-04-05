@@ -342,10 +342,6 @@
         NSNumber *num = [NSNumber numberWithUnsignedInteger:OSSwapInt64(objc2Class.superclass)];
         InfoLog(@"superclass !=0: %016llx (%llu) num: %@", objc2Class.superclass, objc2Class.superclass, num);
         superClassName = [self.machOFile.chainedFixups externalClassNameForAddress:OSSwapInt64(objc2Class.superclass)];
-        
-        if (superClassName == nil) {
-            superClassName = [self loadClassAtAddress:objc2Class.superclass].name;
-        }
     }
     
     if (superClassName) {
@@ -355,6 +351,9 @@
             aClass.superClassRef = [[CDOCClassReference alloc] initWithClassSymbol:superClassSymbol];
         else
             aClass.superClassRef = [[CDOCClassReference alloc] initWithClassName:superClassName];
+    } else {
+        CDOCClass *superClass = [self loadClassAtAddress:objc2Class.superclass];
+        aClass.superClassRef = [[CDOCClassReference alloc] initWithClassObject:superClass];
     }
     
     InfoLog(@"\nLoading metaclass methods...\n");
