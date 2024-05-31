@@ -15,6 +15,7 @@
 #import "CDVisitorPropertyState.h"
 #import "CDOCInstanceVariable.h"
 #import "ClassDumpUtils.h"
+
 @interface CDTextClassDumpVisitor ()
 @end
 
@@ -25,7 +26,7 @@
     NSMutableString *_resultString;
 }
 
-- (id)init;
+- (instancetype)init;
 {
     if ((self = [super init])) {
         _resultString = [[NSMutableString alloc] init];
@@ -231,7 +232,7 @@
         } else if ([attr hasPrefix:@"C"]) {
             [alist addObject:@"copy"];
         } else if ([attr hasPrefix:@"&"]) {
-            [alist addObject:@"retain"];
+            [alist addObject:@"strong"];
         } else if ([attr hasPrefix:@"G"]) {
             [alist addObject:[NSString stringWithFormat:@"getter=%@", [attr substringFromIndex:1]]];
         } else if ([attr hasPrefix:@"S"]) {
@@ -244,6 +245,7 @@
             // @property(assign) __weak NSObject *prop;
             // Only appears with GC.
             isWeak = YES;
+            [alist addObject:@"weak"];
         } else if ([attr hasPrefix:@"P"]) {
             // @property(assign) __strong NSObject *prop;
             // Only appears with GC.
@@ -260,13 +262,10 @@
     }
     
     if ([alist count] > 0) {
-        [self.resultString appendFormat:@"@property(%@) ", [alist componentsJoinedByString:@", "]];
+        [self.resultString appendFormat:@"@property (%@) ", [alist componentsJoinedByString:@", "]];
     } else {
         [self.resultString appendString:@"@property "];
     }
-    
-    if (isWeak)
-        [self.resultString appendString:@"__weak "];
     
     NSString *formattedString = [self.classDump.typeController.propertyTypeFormatter formatVariable:property.name type:parsedType];
     [self.resultString appendFormat:@"%@;", formattedString];

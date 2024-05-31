@@ -9,7 +9,8 @@
 
 @interface CDOCProperty : NSObject
 
-- (id)initWithName:(NSString *)name attributes:(NSString *)attributes;
+- (instancetype)initWithName:(NSString *)name attributes:(NSString *)attributes;
+- (instancetype)initWithName:(NSString *)name attributes:(NSString *)attributes isClass:(BOOL)isClass;
 
 @property (readonly) NSString *name;
 @property (readonly) NSString *attributeString;
@@ -29,6 +30,7 @@
 
 @property (readonly) BOOL isReadOnly;
 @property (readonly) BOOL isDynamic;
+@property (readonly) BOOL isClass;
 
 - (NSComparisonResult)ascendingCompareByName:(CDOCProperty *)other;
 

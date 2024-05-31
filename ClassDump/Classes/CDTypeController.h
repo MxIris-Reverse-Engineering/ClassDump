@@ -11,7 +11,7 @@
 
 @interface CDTypeController : NSObject
 
-- (id)initWithClassDump:(CDClassDump *)classDump;
+- (instancetype)initWithClassDump:(CDClassDump *)classDump;
 
 @property (weak) id <CDTypeControllerDelegate> delegate;
 

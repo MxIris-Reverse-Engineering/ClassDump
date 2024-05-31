@@ -35,7 +35,11 @@
     BOOL _isDynamic;
 }
 
-- (id)initWithName:(NSString *)name attributes:(NSString *)attributes;
+- (instancetype)initWithName:(NSString *)name attributes:(NSString *)attributes {
+    return [self initWithName:name attributes:attributes isClass:NO];
+}
+
+- (instancetype)initWithName:(NSString *)name attributes:(NSString *)attributes isClass:(BOOL)isClass;
 {
     if ((self = [super init])) {
         _name = name;
@@ -50,6 +54,7 @@
         
         _isReadOnly = NO;
         _isDynamic = NO;
+        _isClass = isClass;
         
         [self _parseAttributes];
     }

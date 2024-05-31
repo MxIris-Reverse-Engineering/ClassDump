@@ -236,7 +236,7 @@
 {
     if (name != nil) {
         NSString *framework = [self frameworkForProtocolName:name];
-        NSString *headerName = [name stringByAppendingString:@"-Protocol.h"];
+        NSString *headerName = [name stringByAppendingString:@"+Protocol.h"];
         if (framework == nil)
             return [NSString stringWithFormat:@"#import \"%@\"\n", headerName];
         else
