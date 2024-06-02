@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "ClassDump",
+    platforms: [.macOS(.v10_13)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -16,11 +17,7 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "ClassDump",
-            path: "ClassDump",
-            publicHeadersPath: "Classes",
-            cSettings: [
-                .headerSearchPath("Extras"),
-            ]
+            path: "ClassDump"
         ),
         .testTarget(
             name: "ClassDumpTests",

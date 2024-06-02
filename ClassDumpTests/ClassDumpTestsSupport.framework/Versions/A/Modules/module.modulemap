@@ -1,0 +1,6 @@
+framework module ClassDumpTestsSupport {
+  umbrella header "ClassDumpTestsSupport.h"
+  export *
+
+  module * { export * }
+}

@@ -3,8 +3,8 @@
 //  This file is part of class-dump, a utility for examining the Objective-C segment of Mach-O files.
 //  Copyright (C) 1997-2019 Steve Nygard.
 
-#import "ULEB128.h"
-#import "ClassDumpUtils.h"
+#import <ClassDump/ULEB128.h>
+#import <ClassDump/ClassDumpUtils.h>
 
 uint64_t read_uleb128(const uint8_t **ptrptr, const uint8_t *end)
 {
