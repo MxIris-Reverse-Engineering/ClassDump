@@ -5,19 +5,19 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSArray (CDExtensions)
+@interface NSArray<ObjectType> (CDExtensions)
 
-- (NSArray *)reversedArray;
-
-@end
-
-@interface NSArray (CDTopoSort)
-
-- (NSArray *)topologicallySortedArray;
+- (NSArray<ObjectType> *)reversedArray;
 
 @end
 
-@interface NSMutableArray (CDTopoSort)
+@interface NSArray<ObjectType> (CDTopoSort)
+
+- (NSArray<ObjectType> *)topologicallySortedArray;
+
+@end
+
+@interface NSMutableArray<ObjectType> (CDTopoSort)
 
 - (void)sortTopologically;
 

@@ -1,7 +1,6 @@
-
 #import <Foundation/Foundation.h>
 
-@interface NSData (myAdditions)
+@interface NSData (Filp)
 - (NSString *)stringFromHexData;
 - (NSData *)byteFlipped;
 + (NSData *)dataFromStringHex:(NSString *)command;

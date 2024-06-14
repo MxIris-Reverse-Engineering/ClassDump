@@ -28,7 +28,7 @@ static NSString *HexToDec(NSString *hexValue) {
     }
     return nil;
 }
-@implementation NSData (myAdditions)
+@implementation NSData (Filp)
 
 - (NSString *)stringFromHexData {
     NSString *hexString = CYDHex(self, FALSE);

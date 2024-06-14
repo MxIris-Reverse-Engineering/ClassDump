@@ -4,6 +4,7 @@
 //  Copyright (C) 1997-2019 Steve Nygard.
 
 #import <Foundation/Foundation.h>
+#import <ClassDump/ClassDumpDefines.h>
 
 @class CDType, CDTypeLexer;
 
@@ -18,6 +19,7 @@ extern NSString *CDErrorKey_LocalizedLongDescription;
 #define CDTypeParserCode_Default     0
 #define CDTypeParserCode_SyntaxError 1
 
+CD_PRIVATE
 @interface CDTypeParser : NSObject
 
 - (instancetype)initWithString:(NSString *)string;
