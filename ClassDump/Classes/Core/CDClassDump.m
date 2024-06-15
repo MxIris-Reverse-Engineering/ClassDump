@@ -342,26 +342,28 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
 }
 
 + (BOOL)performClassDumpOnFile:(NSString *)file withEntitlements:(BOOL)dumpEnt toFolder:(NSString *)outputPath error:(NSError **)error {
-    CDClassDump *classDump = [self classDumpInstanceFromFile:file];
-    if (!classDump){
-        DLog(@"couldnt create class dump instance for file: %@", file);
-        
-        *error = [NSError errorWithDomain:CDErrorDomain_ClassDump code:-1 userInfo:@{
-            NSLocalizedDescriptionKey: [NSString stringWithFormat:@"couldnt create class dump instance for file: %@", file]
-        }];
-        
-        return NO;
+    @autoreleasepool {
+        CDClassDump *classDump = [self classDumpInstanceFromFile:file];
+        if (!classDump){
+            DLog(@"couldnt create class dump instance for file: %@", file);
+            
+            *error = [NSError errorWithDomain:CDErrorDomain_ClassDump code:-1 userInfo:@{
+                NSLocalizedDescriptionKey: [NSString stringWithFormat:@"couldnt create class dump instance for file: %@", file]
+            }];
+            
+            return NO;
+        }
+        classDump.shouldShowIvarOffsets = YES; // -a
+        classDump.shouldShowMethodAddresses = NO; // -A
+        [classDump processObjectiveCData];
+        [classDump registerTypes];
+        CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
+        multiFileVisitor.classDump = classDump;
+        multiFileVisitor.outputPath = outputPath;
+        classDump.typeController.delegate = multiFileVisitor;
+        [classDump recursivelyVisit:multiFileVisitor];
+        return YES;
     }
-    classDump.shouldShowIvarOffsets = YES; // -a
-    classDump.shouldShowMethodAddresses = NO; // -A
-    [classDump processObjectiveCData];
-    [classDump registerTypes];
-    CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
-    multiFileVisitor.classDump = classDump;
-    multiFileVisitor.outputPath = outputPath;
-    classDump.typeController.delegate = multiFileVisitor;
-    [classDump recursivelyVisit:multiFileVisitor];
-    return YES;
 }
 
 @end

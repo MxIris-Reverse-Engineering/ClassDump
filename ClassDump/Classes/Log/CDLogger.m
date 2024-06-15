@@ -9,6 +9,7 @@
 #import <OSLog/OSLog.h>
 
 @interface CDLogger ()
+
 @property (nonatomic, strong) os_log_t logger;
 
 @end
