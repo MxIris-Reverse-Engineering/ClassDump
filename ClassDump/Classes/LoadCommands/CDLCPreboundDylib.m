@@ -16,10 +16,10 @@
 - (instancetype)initWithDataCursor:(CDMachOFileDataCursor *)cursor;
 {
     if ((self = [super initWithDataCursor:cursor])) {
-        //DLog(@"current offset: %u", [cursor offset]);
+        //CDLog(@"current offset: %u", [cursor offset]);
         _preboundDylibCommand.cmd     = [cursor readInt32];
         _preboundDylibCommand.cmdsize = [cursor readInt32];
-        //DLog(@"cmdsize: %u", preboundDylibCommand.cmdsize);
+        //CDLog(@"cmdsize: %u", preboundDylibCommand.cmdsize);
         
         _preboundDylibCommand.name.offset           = [cursor readInt32];
         _preboundDylibCommand.nmodules              = [cursor readInt32];

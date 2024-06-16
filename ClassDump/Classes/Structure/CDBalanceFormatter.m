@@ -19,7 +19,7 @@
 {
     if ((self = [super init])) {
         if (!str){
-            VerboseLog(@"%s NSScanner initWithString: %@", _cmds, str);
+            CDLogVerbose(@"%s NSScanner initWithString: %@", __PRETTY_FUNCTION__, str);
         }
         _scanner = [[NSScanner alloc] initWithString:str];
         _openCloseSet = [NSCharacterSet characterSetWithCharactersInString:@"{}<>()"];
@@ -43,16 +43,16 @@
         NSString *pre;
 
         if ([_scanner scanUpToCharactersFromSet:_openCloseSet intoString:&pre]) {
-             VerboseLog(@"pre = '%@'", pre);
+             CDLogVerbose(@"pre = '%@'", pre);
             [_result appendFormat:@"%@%@\n", [NSString spacesIndentedToLevel:level], pre];
         }
-         VerboseLog(@"remaining: '%@'", [[_scanner string] substringFromIndex:[_scanner scanLocation]]);
+         CDLogVerbose(@"remaining: '%@'", [[_scanner string] substringFromIndex:[_scanner scanLocation]]);
 
         foundOpen = foundClose = NO;
         for (NSUInteger index = 0; index < 3; index++) {
-             VerboseLog(@"Checking open %lu: '%@'", index, opens[index]);
+             CDLogVerbose(@"Checking open %lu: '%@'", index, opens[index]);
             if ([_scanner scanString:opens[index] intoString:NULL]) {
-                 VerboseLog(@"Start %@", opens[index]);
+                 CDLogVerbose(@"Start %@", opens[index]);
                 [_result appendSpacesIndentedToLevel:level];
                 [_result appendString:opens[index]];
                 [_result appendString:@"\n"];
@@ -66,12 +66,12 @@
                 break;
             }
 
-             VerboseLog(@"Checking close %lu: '%@'", index, closes[index]);
+             CDLogVerbose(@"Checking close %lu: '%@'", index, closes[index]);
             if ([_scanner scanString:closes[index] intoString:NULL]) {
                 if ([open isEqualToString:opens[index]]) {
-                     VerboseLog(@"End %@", closes[index]);
+                     CDLogVerbose(@"End %@", closes[index]);
                 } else {
-                    VerboseLog(@"ERROR: Unmatched end %@", closes[index]);
+                    CDLogVerbose(@"ERROR: Unmatched end %@", closes[index]);
                 }
                 foundClose = YES;
                 break;
@@ -79,7 +79,7 @@
         }
 
         if (foundOpen == NO && foundClose == NO) {
-             VerboseLog(@"Unknown @ %lu: %@", [_scanner scanLocation], [[_scanner string] substringFromIndex:[_scanner scanLocation]]);
+             CDLogVerbose(@"Unknown @ %lu: %@", [_scanner scanLocation], [[_scanner string] substringFromIndex:[_scanner scanLocation]]);
             break;
         }
 
@@ -92,7 +92,7 @@
 {
     [self parse:nil index:0 level:0];
 
-     VerboseLog(@"result:\n%@", _result);
+     CDLogVerbose(@"result:\n%@", _result);
 
     return [NSString stringWithString:_result];
 }

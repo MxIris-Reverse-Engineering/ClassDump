@@ -101,7 +101,7 @@ static void printChainedFixupsHeader(struct dyld_chained_fixups_header *header) 
                 // DYLD_CHAINED_PTR_64_OFFSET target is vmoffset. Need to add preferredLoadAddress to find it! -- major missing piece to getting this working.
                 if (segment->pointer_format == DYLD_CHAINED_PTR_64_OFFSET) {
                     unpackedTarget += self.machOFile.preferredLoadAddress;
-                    //ODLog(@"unpackedTarget adjusted", unpackedTarget);
+                    //CDLogVerbose_HEX(@"unpackedTarget adjusted", unpackedTarget);
                 }
                 if ([CDClassDump printFixupData]){
                     fprintf(stderr,"        %#010x RAW: %#010llx REBASE   target: %#010llx   high8: %#010x\n",
@@ -170,7 +170,7 @@ static void printChainedFixupsHeader(struct dyld_chained_fixups_header *header) 
 - (NSString *)getDylibNameByOrdinal:(NSInteger)ordinal baseName:(BOOL)basename {
     if (ordinal > 0 && ordinal <= MAX_LIBRARY_ORDINAL) { // 0 ~ 253
         CDLCDylib *dylibCmd = [self dylibCommandForOrdinal:ordinal - 1];
-        //InfoLog(@"found dylibCmd: %@ for ordinal: %lu", dylibCmd, ordinal);
+        //CDLogInfo(@"found dylibCmd: %@ for ordinal: %lu", dylibCmd, ordinal);
         if (basename) {
             return dylibCmd.path.lastPathComponent;
         }
@@ -205,7 +205,7 @@ static void printChainedFixupsHeader(struct dyld_chained_fixups_header *header) 
     }
     if([CDClassDump printFixupData]){
         fprintf(stderr,"\n");
-        InfoLog(@"imports: %@", _imports);
+        CDLogInfo(@"imports: %@", _imports);
     }
 }
 
@@ -268,7 +268,7 @@ static void formatPointerFormat(uint16_t pointer_format, char *formatted) {
         if ([str hasPrefix:ObjCClassSymbolPrefix]) {
             return [str substringFromIndex:[ObjCClassSymbolPrefix length]];
         } else {
-            DLog(@"Warning: Unknown prefix on symbol name... %@ (addr %lx)", str, address);
+            CDLog(@"Warning: Unknown prefix on symbol name... %@ (addr %lx)", str, address);
             return str;
         }
     }
@@ -286,7 +286,7 @@ static void formatPointerFormat(uint16_t pointer_format, char *formatted) {
 
 //refactor, the adjustment should never be needed again.
 - (NSUInteger)rebaseTargetFromAddress:(NSUInteger)address adjustment:(NSUInteger)adj {
-    InfoLog(@"%s : %#010llx (%lu)", _cmds, address-adj, address-adj);
+    CDLogInfo(@"%s : %#010llx (%lu)", __PRETTY_FUNCTION__, address-adj, address-adj);
     NSNumber *key = [NSNumber numberWithUnsignedInteger:address-adj]; // I don't think 32-bit will dump 64-bit stuff.
     return [_based[key] unsignedIntegerValue];
 }
@@ -307,7 +307,7 @@ static void formatPointerFormat(uint16_t pointer_format, char *formatted) {
 - (void)bindAddress:(uint64_t)address type:(uint8_t)type symbolName:(const char *)symbolName flags:(uint8_t)flags
              addend:(int64_t)addend libraryOrdinal:(int64_t)libraryOrdinal; {
 #if 0
-    VerboseLog(@"    Bind address: %016lx, type: 0x%02x, flags: %02x, addend: %016lx, libraryOrdinal: %ld, symbolName: %s",
+    CDLogVerbose(@"    Bind address: %016lx, type: 0x%02x, flags: %02x, addend: %016lx, libraryOrdinal: %ld, symbolName: %s",
                address, type, flags, addend, libraryOrdinal, symbolName);
 #endif
     
@@ -367,8 +367,8 @@ static void formatPointerFormat(uint16_t pointer_format, char *formatted) {
             }
         }
         if ([CDClassDump printFixupData]){
-            DLog(@"symbolNamesByAddress: %@", _symbolNamesByAddress);
-            DLog(@"based: %@", _based);
+            CDLog(@"symbolNamesByAddress: %@", _symbolNamesByAddress);
+            CDLog(@"based: %@", _based);
         }
     }
 }

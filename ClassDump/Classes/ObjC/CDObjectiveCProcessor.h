@@ -17,8 +17,6 @@
 @property (readonly) NSString *garbageCollectionStatus;
 @property (readonly) CDProtocolUniquer *protocolUniquer;
 
-@property BOOL shouldStripOverrideMethods;
-
 - (instancetype)initWithMachOFile:(CDMachOFile *)machOFile;
 
 - (void)addClass:(CDOCClass *)aClass withAddress:(uint64_t)address;

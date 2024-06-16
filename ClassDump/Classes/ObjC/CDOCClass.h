@@ -14,6 +14,7 @@
 @property (strong) CDOCClassReference *superClassRef;
 @property (copy, readonly) NSString *superClassName;
 @property (strong) NSArray<CDOCInstanceVariable *> *instanceVariables;
+@property (strong, readonly) NSOrderedSet<NSString *> *instancePropertySynthesizedIvarNames;
 @property (assign) BOOL isExported;
 @property (assign) BOOL isSwiftClass;
 

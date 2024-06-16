@@ -17,9 +17,17 @@ typedef NS_ENUM(NSInteger, CDLogLevel) {
     CDLogLevelError,
 };
 
+typedef NS_ENUM(NSInteger, CDLogSystem) {
+    CDLogSystemNSLog,
+    CDLogSystemOSLog,
+};
+
 @interface CDLogger : NSObject
 
-@property (nonatomic, assign) BOOL isVerbose;
+@property (assign, getter=isVerbose) BOOL verbose;
+@property (assign, getter=isEnabled) BOOL enabled;
+@property (assign) CDLogSystem logSystem;
+
 
 + (instancetype)sharedLogger;
 

@@ -12,15 +12,6 @@
 #import <ClassDump/ClassDumpUtils.h>
 @implementation CDFatArch
 {
-    __weak CDFatFile *_fatFile;
-    
-    // This is essentially struct fat_arch, but this way our property accessors can be synthesized.
-    cpu_type_t _cputype;
-    cpu_subtype_t _cpusubtype;
-    uint32_t _offset;
-    uint32_t _size;
-    uint32_t _align;
-    
     CDMachOFile *_machOFile; // Lazily create this.
     
     __weak CDMachOFile *_machOFileFromInit;
@@ -51,7 +42,7 @@
         _size       = [cursor readBigInt32];
         _align      = [cursor readBigInt32];
         
-        //DLog(@"self: %@", self);
+        //CDLog(@"self: %@", self);
     }
 
     return self;

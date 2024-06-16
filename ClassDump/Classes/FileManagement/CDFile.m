@@ -75,14 +75,14 @@ CDArch CDArchFromName(NSString *name)
         } else {
             NSString *ignore;
             if (!name) {
-                VerboseLog(@"%s NSScanner initWithString: %@", _cmds, name);
+                CDLogVerbose(@"%s NSScanner initWithString: %@", __PRETTY_FUNCTION__, name);
             }
             NSScanner *scanner = [[NSScanner alloc] initWithString:name];
             if ([scanner scanHexInt:(uint32_t *)&arch.cputype]
                 && [scanner scanString:@":" intoString:&ignore]
                 && [scanner scanHexInt:(uint32_t *)&arch.cpusubtype]) {
                 // Great!
-                //DLog(@"scanned 0x%08x : 0x%08x from '%@'", arch.cputype, arch.cpusubtype, name);
+                //CDLog(@"scanned 0x%08x : 0x%08x from '%@'", arch.cputype, arch.cpusubtype, name);
             } else {
                 arch.cputype    = CPU_TYPE_ANY;
                 arch.cpusubtype = 0;

@@ -47,14 +47,14 @@
         
         [visitor willVisitCategory:self];
         
-        //[aVisitor willVisitPropertiesOfCategory:self];
-        //[self visitProperties:aVisitor];
-        //[aVisitor didVisitPropertiesOfCategory:self];
+        [visitor willVisitPropertiesOfCategory:self];
+        [self visitProperties:visitor];
+        [visitor didVisitPropertiesOfCategory:self];
         
         [self visitMethods:visitor propertyState:propertyState];
         // This can happen when... the accessors are implemented on the main class.  Odd case, but we should still emit the remaining properties.
         // Should mostly be dynamic properties
-        [visitor visitRemainingProperties:propertyState];
+//        [visitor visitRemainingProperties:propertyState];
         [visitor didVisitCategory:self];
     }
 }

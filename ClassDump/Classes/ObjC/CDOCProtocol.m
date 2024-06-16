@@ -20,7 +20,7 @@
 
 #pragma mark -
 
-@implementation CDOCProtocol{
+@implementation CDOCProtocol {
     NSString *_name;
     NSMutableArray *_protocols;
     NSMutableArray *_properties;
@@ -28,8 +28,10 @@
     NSMutableOrderedSet *_instanceMethods;
     NSMutableOrderedSet *_optionalClassMethods;
     NSMutableOrderedSet *_optionalInstanceMethods;
-
     NSMutableSet *_adoptedProtocolNames;
+    NSMutableOrderedSet *_classPropertySynthesizedMethodNames;
+    NSMutableOrderedSet *_instancePropertySynthesizedMethodNames;
+    
 }
 
 - (instancetype)init; {
@@ -41,8 +43,10 @@
         _instanceMethods = [[NSMutableOrderedSet alloc] init];
         _optionalClassMethods = [[NSMutableOrderedSet alloc] init];
         _optionalInstanceMethods = [[NSMutableOrderedSet alloc] init];
-
         _adoptedProtocolNames = [[NSMutableSet alloc] init];
+        _classPropertySynthesizedMethodNames = [NSMutableOrderedSet orderedSet];
+        _instancePropertySynthesizedMethodNames = [NSMutableOrderedSet orderedSet];
+        
     }
 
     return self;
@@ -59,7 +63,7 @@
 
 // This assumes that the protocol name doesn't change after it's been added to this.
 - (void)addProtocol:(CDOCProtocol *)protocol; {
-    ILOG_CMD;
+    CDLogInfo_CMD;
 
     if ([_adoptedProtocolNames containsObject:protocol.name] == NO) {
         [_protocols addObject:protocol];
@@ -131,6 +135,13 @@
 
 - (void)addProperty:(CDOCProperty *)property; {
     [_properties addObject:property];
+    if (property.isClass) {
+        [_classPropertySynthesizedMethodNames addObject:property.getter];
+        [_classPropertySynthesizedMethodNames addObject:property.setter];
+    } else {
+        [_instancePropertySynthesizedMethodNames addObject:property.getter];
+        [_instancePropertySynthesizedMethodNames addObject:property.setter];
+    }
 }
 
 - (BOOL)hasMethods; {
@@ -183,14 +194,14 @@
 
         [visitor willVisitProtocol:self];
 
-        //[aVisitor willVisitPropertiesOfProtocol:self];
-        //[self visitProperties:aVisitor];
-        //[aVisitor didVisitPropertiesOfProtocol:self];
+        [visitor willVisitPropertiesOfProtocol:self];
+        [self visitProperties:visitor];
+        [visitor didVisitPropertiesOfProtocol:self];
 
         [self visitMethods:visitor propertyState:propertyState];
 
         // @optional properties will generate optional instance methods, and we'll emit @property in the @optional section.
-        [visitor visitRemainingProperties:propertyState];
+//        [visitor visitRemainingProperties:propertyState];
 
         [visitor didVisitProtocol:self];
     }
@@ -204,7 +215,13 @@
     }
 
     for (CDOCMethod *method in methods) {
-        [visitor visitClassMethod:method];
+        if (visitor.classDump.shouldStripSynthesized && [self.classPropertySynthesizedMethodNames containsObject:method.name]) {
+            continue;
+        }
+        
+        if ([self shouldVisitClassMethod:method]) {
+            [visitor visitClassMethod:method];
+        }
     }
 
     methods = self.instanceMethods.array;
@@ -214,7 +231,21 @@
     }
 
     for (CDOCMethod *method in methods) {
-        [visitor visitInstanceMethod:method propertyState:propertyState];
+        if (visitor.classDump.shouldStripSynthesized && [self.instancePropertySynthesizedMethodNames containsObject:method.name]) {
+            continue;
+        }
+        
+        if (visitor.classDump.shouldStripCtor && [method.name isEqualToString:@".cxx_construct"]) {
+            continue;
+        }
+        
+        if (visitor.classDump.shouldStripDtor && [method.name isEqualToString:@".cxx_destruct"]) {
+            continue;
+        }
+        
+        if ([self shouldVisitInstanceMethod:method]) {
+            [visitor visitInstanceMethod:method propertyState:propertyState];
+        }
     }
 
     if ([self.optionalClassMethods count] > 0 || [self.optionalInstanceMethods count] > 0) {
@@ -244,19 +275,33 @@
     }
 }
 
-#if 0
+- (BOOL)shouldVisitProperty:(CDOCProperty *)property {
+    return YES;
+}
+
+- (BOOL)shouldVisitClassMethod:(CDOCMethod *)method {
+    return YES;
+}
+
+- (BOOL)shouldVisitInstanceMethod:(CDOCMethod *)method {
+    return YES;
+}
+
+//#if 0
 - (void)visitProperties:(CDVisitor *)visitor; {
-    NSArray *array = properties;
+    NSArray *array = self.properties;
 
     if (visitor.classDump.shouldSortMethods) {
         array = [array sortedArrayUsingSelector:@selector(ascendingCompareByName:)];
     }
 
     for (CDOCProperty *property in array) {
-        [visitor visitProperty:property];
+        if ([self shouldVisitProperty:property]) {
+            [visitor visitProperty:property];
+        }
     }
 }
-#endif
+//#endif
 
 #pragma mark -
 

@@ -12,6 +12,7 @@
 #import <ClassDump/CDMachOFile.h>
 #import <ClassDump/CDMultiFileVisitor.h>
 #import <ClassDump/CDSearchPathState.h>
+#import <ClassDump/CDOCPropertyAttribute.h>
 #import <Foundation/Foundation.h>
 #include <mach-o/arch.h>
 
@@ -42,16 +43,21 @@ extern NSString *CDErrorKey_Exception;
 @property BOOL shouldShowIvarOffsets;
 @property BOOL shouldShowMethodAddresses;
 @property BOOL shouldShowHeader;
-@property BOOL shouldStripOverrideMethods;
+@property BOOL shouldStripOverrides;
+@property BOOL shouldStripSynthesized;
+@property BOOL shouldStripCtor;
+@property BOOL shouldStripDtor;
 @property BOOL verbose;
 @property BOOL stopAfterPreProcessor;
 @property BOOL shallow;
 @property BOOL dumpEntitlements;
+@property (nonatomic, strong, readonly, nullable) NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights;
+@property (nonatomic, strong, nullable) NSArray<CDOCPropertyAttributeType> *sortedPropertyAttributeTypes;
 @property CDArch targetArch;
 @property (strong, nullable) NSRegularExpression *regularExpression;
 @property (strong, nullable) NSString *sdkRoot;
-@property (readonly) NSArray *machOFiles;
-@property (readonly) NSArray *objcProcessors;
+@property (readonly) NSArray<CDMachOFile *> *machOFiles;
+@property (readonly) NSArray<CDObjectiveCProcessor *> *objcProcessors;
 @property (readonly) BOOL containsObjectiveCData;
 @property (readonly) BOOL hasEncryptedFiles;
 @property (readonly) BOOL hasObjectiveCRuntimeInfo;
@@ -59,6 +65,7 @@ extern NSString *CDErrorKey_Exception;
 @property (readonly) CDSearchPathState *searchPathState;
 
 - (BOOL)loadFile:(CDFile *)file error:(NSError **)error;
+
 - (void)processObjectiveCData;
 
 - (void)recursivelyVisit:(CDVisitor *)visitor;

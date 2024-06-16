@@ -1,24 +1,17 @@
 #import <objc/NSObject.h>
 
 @interface CDTestObjectA : NSObject
-{
-    _Bool _boolValue;	// 8 = 0x8
-    id _objectValue;	// 16 = 0x10
-}
+
+@property (nonatomic, readonly, class) id objectClassProperty;
+@property (nonatomic, readonly, class) _Bool valueClassProperty;
+@property (nonatomic, readonly, class) struct CDTestStructA structClassProperty;
+@property (nonatomic, getter=isEnabled) _Bool enabled;
+@property (nonatomic, retain) id objectValue;
+@property (nonatomic) _Bool boolValue;
+@property (nonatomic, setter=_setBoolValue:) _Bool _boolValue;
 
 + (void)voidClassMethod;
-+ (struct CDTestStructA)structClassProperty;
-+ (_Bool)valueClassProperty;
-+ (id)objectClassProperty;
-- (void).cxx_destruct;
-@property (strong, nonatomic) id objectValue;
-@property (nonatomic) _Bool boolValue;
 - (void)voidInstanceMethod;
-
-// Remaining properties
-@property (readonly, nonatomic, class) id objectClassProperty;
-@property (readonly, nonatomic, class) struct CDTestStructA structClassProperty;
-@property (readonly, nonatomic, class) _Bool valueClassProperty;
 
 @end
 

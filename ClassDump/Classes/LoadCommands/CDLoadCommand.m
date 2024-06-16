@@ -107,10 +107,10 @@
         case LC_NOTE:
 
         default:
-            DLog(@"Unknown load command: 0x%08x", val);
+            CDLog(@"Unknown load command: 0x%08x", val);
     };
 
-    //DLog(@"targetClass: %@", NSStringFromClass(targetClass));
+    //CDLog(@"targetClass: %@", NSStringFromClass(targetClass));
 
     return [[targetClass alloc] initWithDataCursor:cursor];
 }

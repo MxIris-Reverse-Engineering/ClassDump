@@ -2,5 +2,6 @@
 
 @interface CDTestObjectB : CDTestObjectA
 
+
 @end
 

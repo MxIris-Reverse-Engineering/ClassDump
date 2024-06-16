@@ -15,10 +15,10 @@
 - (instancetype)initWithDataCursor:(CDMachOFileDataCursor *)cursor;
 {
     if ((self = [super initWithDataCursor:cursor])) {
-        VerboseLog(@"offset: %lu", [cursor offset]);
+        CDLogVerbose(@"offset: %lu", [cursor offset]);
         _loadCommand.cmd     = [cursor readInt32];
         _loadCommand.cmdsize = [cursor readInt32];
-         VerboseLog(@"cmdsize: %u", _loadCommand.cmdsize);
+         CDLogVerbose(@"cmdsize: %u", _loadCommand.cmdsize);
         
         if (_loadCommand.cmdsize > 8) {
             NSMutableData *commandData = [[NSMutableData alloc] init];

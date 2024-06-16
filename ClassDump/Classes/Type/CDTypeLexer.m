@@ -35,7 +35,7 @@ static NSString *CDTypeLexerStateName(CDTypeLexerState state)
 {
     if ((self = [super init])) {
         if (!string){
-            VerboseLog(@"%s NSScanner initWithString: %@", _cmds, string);
+            CDLogVerbose(@"%s NSScanner initWithString: %@", __PRETTY_FUNCTION__, string);
             return nil;
         }
         _scanner = [[NSScanner alloc] initWithString:string];
@@ -52,7 +52,7 @@ static NSString *CDTypeLexerStateName(CDTypeLexerState state)
 - (void)setState:(CDTypeLexerState)newState;
 {
     if (_state != newState){
-        VerboseLog(@"CDTypeLexer - changing state from %lu (%@) to %lu (%@)", _state, CDTypeLexerStateName(_state), newState, CDTypeLexerStateName(newState));
+        CDLogVerbose(@"CDTypeLexer - changing state from %lu (%@) to %lu (%@)", _state, CDTypeLexerStateName(_state), newState, CDTypeLexerStateName(newState));
     }
     _state = newState;
 }
@@ -70,7 +70,7 @@ static NSString *CDTypeLexerStateName(CDTypeLexerState state)
     _lexText = nil;
 
     if ([_scanner isAtEnd]) {
-        if (_shouldShowLexing)                       DLog(@"%s [state=%lu], token = TK_EOS", _cmds, _state);
+        if (_shouldShowLexing)                       CDLog(@"%s [state=%lu], token = TK_EOS", __PRETTY_FUNCTION__, _state);
         return TK_EOS;
     }
 
@@ -78,36 +78,36 @@ static NSString *CDTypeLexerStateName(CDTypeLexerState state)
         // Skip whitespace, scan '<', ',', '>'.  Everything else is lumped together as a string.
         [_scanner setCharactersToBeSkipped:[NSCharacterSet whitespaceCharacterSet]];
         if ([_scanner scanString:@"<" intoString:NULL]) {
-            if (_shouldShowLexing)                   DLog(@"%s [state=%lu], token = %d '%c'", _cmds, _state, '<', '<');
+            if (_shouldShowLexing)                   CDLog(@"%s [state=%lu], token = %d '%c'", __PRETTY_FUNCTION__, _state, '<', '<');
             return '<';
         }
 
         if ([_scanner scanString:@">" intoString:NULL]) {
-            if (_shouldShowLexing)                   DLog(@"%s [state=%lu], token = %d '%c'", _cmds, _state, '>', '>');
+            if (_shouldShowLexing)                   CDLog(@"%s [state=%lu], token = %d '%c'", __PRETTY_FUNCTION__, _state, '>', '>');
             return '>';
         }
 
         if ([_scanner scanString:@"," intoString:NULL]) {
-            if (_shouldShowLexing)                   DLog(@"%s [state=%lu], token = %d '%c'", _cmds, _state, ',', ',');
+            if (_shouldShowLexing)                   CDLog(@"%s [state=%lu], token = %d '%c'", __PRETTY_FUNCTION__, _state, ',', ',');
             return ',';
         }
 
         if ([_scanner my_scanCharactersFromSet:[NSScanner cdTemplateTypeCharacterSet] intoString:&str]) {
             _lexText = str;
-            if (_shouldShowLexing)                   DLog(@"%s [state=%lu], token = TK_TEMPLATE_TYPE (%@)", _cmds, _state, _lexText);
+            if (_shouldShowLexing)                   CDLog(@"%s [state=%lu], token = TK_TEMPLATE_TYPE (%@)", __PRETTY_FUNCTION__, _state, _lexText);
             return TK_TEMPLATE_TYPE;
         }
 
-        DLog(@"Ooops, fell through in template types state.");
+        CDLog(@"Ooops, fell through in template types state.");
     } else if (_state == CDTypeLexerState_Identifier) {
         NSString *identifier;
 
-        //DLog(@"Scanning in identifier state.");
+        //CDLog(@"Scanning in identifier state.");
         [_scanner setCharactersToBeSkipped:nil];
 
         if ([_scanner scanIdentifierIntoString:&identifier]) {
             _lexText = identifier;
-            if (_shouldShowLexing)                   DLog(@"%s [state=%lu], token = TK_IDENTIFIER (%@)", _cmds, _state, _lexText);
+            if (_shouldShowLexing)                   CDLog(@"%s [state=%lu], token = TK_IDENTIFIER (%@)", __PRETTY_FUNCTION__, _state, _lexText);
             _state = CDTypeLexerState_Normal;
             return TK_IDENTIFIER;
         }
@@ -121,23 +121,23 @@ static NSString *CDTypeLexerStateName(CDTypeLexerState state)
                 _lexText = @"";
 
             [_scanner scanString:@"\"" intoString:NULL];
-            if (_shouldShowLexing)                   DLog(@"%s [state=%lu], token = TK_QUOTED_STRING (%@)", _cmds, _state, _lexText);
+            if (_shouldShowLexing)                   CDLog(@"%s [state=%lu], token = TK_QUOTED_STRING (%@)", __PRETTY_FUNCTION__, _state, _lexText);
             return TK_QUOTED_STRING;
         }
 
         if ([_scanner my_scanCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet] intoString:&str]) {
             _lexText = str;
-            if (_shouldShowLexing)                   DLog(@"%s [state=%lu], token = TK_NUMBER (%@)", _cmds, _state, _lexText);
+            if (_shouldShowLexing)                   CDLog(@"%s [state=%lu], token = TK_NUMBER (%@)", __PRETTY_FUNCTION__, _state, _lexText);
             return TK_NUMBER;
         }
 
         if ([_scanner scanCharacter:&ch]) {
-            if (_shouldShowLexing)                   DLog(@"%s [state=%lu], token = %d '%c'", _cmds, _state, ch, ch);
+            if (_shouldShowLexing)                   CDLog(@"%s [state=%lu], token = %d '%c'", __PRETTY_FUNCTION__, _state, ch, ch);
             return ch;
         }
     }
 
-    if (_shouldShowLexing)                           DLog(@"%s [state=%lu], token = TK_EOS", _cmds, _state);
+    if (_shouldShowLexing)                           CDLog(@"%s [state=%lu], token = TK_EOS", __PRETTY_FUNCTION__, _state);
 
     return TK_EOS;
 }
@@ -155,7 +155,7 @@ static NSString *CDTypeLexerStateName(CDTypeLexerState state)
 - (NSString *)peekIdentifier;
 {
     if (![_scanner string]){
-        VerboseLog(@"%s NSScanner initWithString: %@", _cmds, [_scanner string]);
+        CDLogVerbose(@"%s NSScanner initWithString: %@", __PRETTY_FUNCTION__, [_scanner string]);
     }
     NSScanner *peekScanner = [[NSScanner alloc] initWithString:[_scanner string]];
     [peekScanner setScanLocation:[_scanner scanLocation]];

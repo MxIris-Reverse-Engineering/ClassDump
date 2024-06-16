@@ -39,6 +39,10 @@
 @property (readonly) NSArray<CDOCProperty *> *properties;
 - (void)addProperty:(CDOCProperty *)property;
 
+@property (readonly) NSOrderedSet<NSString *> *classPropertySynthesizedMethodNames;
+@property (readonly) NSOrderedSet<NSString *> *instancePropertySynthesizedMethodNames;
+
+
 @property (readonly) BOOL hasMethods;
 
 - (void)registerTypesWithObject:(CDTypeController *)typeController phase:(NSUInteger)phase;
@@ -48,9 +52,11 @@
 
 - (NSString *)methodSearchContext;
 - (void)recursivelyVisit:(CDVisitor *)visitor;
-
+- (void)visitProperties:(CDVisitor *)visitor;
 - (void)visitMethods:(CDVisitor *)visitor propertyState:(CDVisitorPropertyState *)propertyState;
-
+- (BOOL)shouldVisitProperty:(CDOCProperty *)property;
+- (BOOL)shouldVisitClassMethod:(CDOCMethod *)method;
+- (BOOL)shouldVisitInstanceMethod:(CDOCMethod *)method;
 - (void)mergeMethodsFromProtocol:(CDOCProtocol *)other;
 - (void)mergePropertiesFromProtocol:(CDOCProtocol *)other;
 

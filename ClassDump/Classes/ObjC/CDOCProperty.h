@@ -6,6 +6,9 @@
 #import <Foundation/Foundation.h>
 
 @class CDType;
+@class CDOCPropertyAttribute;
+
+
 
 @interface CDOCProperty : NSObject
 
@@ -14,15 +17,17 @@
 @property (readonly) NSString *name;
 @property (readonly) NSString *attributeString;
 @property (readonly) CDType *type;
-@property (readonly) NSArray *attributes;
-
-@property (strong) NSString *attributeStringAfterType;
+@property (readonly) NSArray<NSString *> *attributes;
+@property (readonly) NSArray<NSString *> *unknownAttributes;
+@property (readonly) NSArray<CDOCPropertyAttribute *> *detailAttributes;
+@property (readonly) NSString *ivar;
+@property (readonly) NSString *attributeStringAfterType;
 
 @property (readonly) NSString *defaultGetter;
 @property (readonly) NSString *defaultSetter;
 
-@property (strong) NSString *customGetter;
-@property (strong) NSString *customSetter;
+@property (readonly) NSString *customGetter;
+@property (readonly) NSString *customSetter;
 
 @property (readonly) NSString *getter;
 @property (readonly) NSString *setter;

@@ -23,10 +23,10 @@
         _rpathCommand.path.offset = [cursor readInt32];
         
         NSUInteger length = _rpathCommand.cmdsize - sizeof(_rpathCommand);
-        //DLog(@"expected length: %u", length);
+        //CDLog(@"expected length: %u", length);
         
         _path = [cursor readStringOfLength:length encoding:NSASCIIStringEncoding];
-        //DLog(@"path: %@", _path);
+        //CDLog(@"path: %@", _path);
     }
 
     return self;

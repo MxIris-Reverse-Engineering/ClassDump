@@ -9,10 +9,10 @@
 
 @interface CDOCSymtab : NSObject
 
-@property (readonly) NSMutableArray *classes;
+@property (readonly) NSArray *classes;
 - (void)addClass:(CDOCClass *)aClass;
 
-@property (readonly) NSMutableArray *categories;
+@property (readonly) NSArray *categories;
 - (void)addCategory:(CDOCCategory *)category;
 
 @end

@@ -143,7 +143,7 @@ static NSString *CDTokenDescription(int token)
 - (void)match:(int)token enterState:(CDTypeLexerState)newState;
 {
     if (_lookahead == token) {
-        if (debug) VerboseLog(@"matched %@", CDTokenDescription(token));
+        if (debug) CDLogVerbose(@"matched %@", CDTokenDescription(token));
         self.lexer.state = newState;
         _lookahead = [self.lexer scanNextToken];
     } else {
@@ -243,10 +243,10 @@ static NSString *CDTokenDescription(int token)
         [self match:'@'];
 #if 0
         if (lookahead == TK_QUOTED_STRING) {
-            DLog(@"%s, quoted string ahead, shouldCheckFieldNames: %d, end: %d",
+            CDLog(@"%s, quoted string ahead, shouldCheckFieldNames: %d, end: %d",
                   _cmd, shouldCheckFieldNames, [lexer.scanner isAtEnd]);
             if ([lexer.scanner isAtEnd] == NO)
-                DLog(@"next character: %d (%c), isInTypeStartSet: %d", lexer.peekChar, lexer.peekChar, [self isTokenInTypeStartSet:lexer.peekChar]);
+                CDLog(@"next character: %d (%c), isInTypeStartSet: %d", lexer.peekChar, lexer.peekChar, [self isTokenInTypeStartSet:lexer.peekChar]);
         }
 #endif
         if (_lookahead == TK_QUOTED_STRING && (isInStruct == NO || [self.lexer.lexText isFirstLetterUppercase] || [self isTokenInTypeStartSet:self.lexer.peekChar] == NO)) {
@@ -323,7 +323,7 @@ static NSString *CDTokenDescription(int token)
         CDTypeName *typeName = [[CDTypeName alloc] init];
         typeName.name = @"MISSING_TYPE";
         result = [[CDType alloc] initIDType:typeName];
-        //DLog(@"error: %@", [NSString stringWithFormat:@"expected (many things), got %@ from %i", CDTokenDescription(_lookahead), _lookahead]);
+        //CDLog(@"error: %@", [NSString stringWithFormat:@"expected (many things), got %@ from %i", CDTokenDescription(_lookahead), _lookahead]);
 //        result = nil;
 //        [NSException raise:CDExceptionName_SyntaxError format:@"expected (many things), got %@", CDTokenDescription(_lookahead)];
     }
@@ -360,14 +360,14 @@ static NSString *CDTokenDescription(int token)
 
 - (NSArray *)parseMemberList;
 {
-    //DLog(@" > %s", _cmds);
+    //CDLog(@" > %s", __PRETTY_FUNCTION__);
 
     NSMutableArray *result = [NSMutableArray array];
 
     while (_lookahead == TK_QUOTED_STRING || [self isTokenInTypeSet:_lookahead])
         [result addObject:[self parseMember]];
 
-    //DLog(@"<  %s", _cmds);
+    //CDLog(@"<  %s", __PRETTY_FUNCTION__);
 
     return result;
 }
@@ -376,7 +376,7 @@ static NSString *CDTokenDescription(int token)
 {
     CDType *result;
 
-    //DLog(@" > %s", _cmds);
+    //CDLog(@" > %s", __PRETTY_FUNCTION__);
 
     if (_lookahead == TK_QUOTED_STRING) {
         NSString *identifier = nil;
@@ -391,15 +391,15 @@ static NSString *CDTokenDescription(int token)
             [self match:TK_QUOTED_STRING];
         }
 
-        //DLog(@"got identifier: %@", identifier);
+        //CDLog(@"got identifier: %@", identifier);
         result = [self _parseTypeInStruct:YES];
         result.variableName = identifier;
-        //DLog(@"And parsed struct type.");
+        //CDLog(@"And parsed struct type.");
     } else {
         result = [self _parseTypeInStruct:YES];
     }
 
-    //DLog(@"<  %s", _cmds);
+    //CDLog(@"<  %s", __PRETTY_FUNCTION__);
     return result;
 }
 

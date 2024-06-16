@@ -26,7 +26,7 @@
         
         for (CDOCProperty *property in properties) {
             if ([property name] == nil){
-                InfoLog(@"property: %@, getter: %@, setter: %@", property, [property getter], [property setter]);
+                CDLogInfo(@"property: %@, getter: %@, setter: %@", property, [property getter], [property setter]);
             } else {
                 _propertiesByName[property.name] = property;
                 _propertiesByAccessor[property.getter] = property;
@@ -44,8 +44,8 @@
 
 - (void)log;
 {
-    DLog(@"propertiesByAccessor: %@", _propertiesByAccessor);
-    DLog(@"propertiesByName: %@", _propertiesByName);
+    CDLog(@"propertiesByAccessor: %@", _propertiesByAccessor);
+    CDLog(@"propertiesByName: %@", _propertiesByName);
 }
 
 #pragma mark -

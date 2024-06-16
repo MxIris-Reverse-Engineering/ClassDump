@@ -21,7 +21,7 @@ FOUNDATION_EXPORT const unsigned char ClassDumpVersionString[];
 #import <ClassDump/CDClassDumpVisitor.h>
 #import <ClassDump/CDClassFrameworkVisitor.h>
 #import <ClassDump/CDDataCursor.h>
-#import <ClassDump/CDExtensions.h>
+//#import <ClassDump/CDExtensions.h>
 #import <ClassDump/CDFatArch.h>
 #import <ClassDump/CDFatFile.h>
 #import <ClassDump/CDFile.h>
@@ -70,6 +70,7 @@ FOUNDATION_EXPORT const unsigned char ClassDumpVersionString[];
 #import <ClassDump/CDOCMethod.h>
 #import <ClassDump/CDOCModule.h>
 #import <ClassDump/CDOCProperty.h>
+#import <ClassDump/CDOCPropertyAttribute.h>
 #import <ClassDump/CDOCProtocol.h>
 #import <ClassDump/CDOCSymtab.h>
 #import <ClassDump/CDProtocolUniquer.h>

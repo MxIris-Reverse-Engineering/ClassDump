@@ -18,10 +18,10 @@
         _command.cmdsize = [cursor readInt32];
         
         NSUInteger length = _command.cmdsize - sizeof(_command);
-        //DLog(@"expected length: %u", length);
+        //CDLog(@"expected length: %u", length);
         
         _name = [cursor readStringOfLength:length encoding:NSASCIIStringEncoding];
-        //DLog(@"name: %@", _name);
+        //CDLog(@"name: %@", _name);
     }
 
     return self;

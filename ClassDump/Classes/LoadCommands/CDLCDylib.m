@@ -31,10 +31,10 @@ static NSString *CDDylibVersionString(uint32_t version)
         _dylibCommand.dylib.compatibility_version = [cursor readInt32];
         
         NSUInteger length = _dylibCommand.cmdsize - sizeof(_dylibCommand);
-        //DLog(@"expected length: %u", length);
+        //CDLog(@"expected length: %u", length);
         
         _path = [cursor readStringOfLength:length encoding:NSASCIIStringEncoding];
-        //DLog(@"path: %@", path);
+        //CDLog(@"path: %@", path);
     }
 
     return self;

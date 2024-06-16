@@ -15,6 +15,7 @@
 #import <ClassDump/CDVisitorPropertyState.h>
 #import <ClassDump/CDOCInstanceVariable.h>
 #import <ClassDump/ClassDumpUtils.h>
+#import <ClassDump/CDExtensions.h>
 
 @interface CDTextClassDumpVisitor ()
 @end
@@ -122,21 +123,21 @@
 
 - (void)visitInstanceMethod:(CDOCMethod *)method propertyState:(CDVisitorPropertyState *)propertyState;
 {
-    CDOCProperty *property = [propertyState propertyForAccessor:method.name];
-    if (property == nil) {
-        //DLog(@"No property for method: %@", method.name);
+//    CDOCProperty *property = [propertyState propertyForAccessor:method.name];
+//    if (property == nil) {
+        //CDLog(@"No property for method: %@", method.name);
         [self.resultString appendString:@"- "];
         [method appendToString:self.resultString typeController:self.classDump.typeController];
         [self.resultString appendString:@"\n"];
-    } else {
-        if ([propertyState hasUsedProperty:property] == NO) {
-            //DLog(@"Emitting property %@ triggered by method %@", property.name, method.name);
-            [self visitProperty:property];
-            [propertyState useProperty:property];
-        } else {
-            //DLog(@"Have already emitted property %@ triggered by method %@", property.name, method.name);
-        }
-    }
+//    } else {
+//        if ([propertyState hasUsedProperty:property] == NO) {
+            //CDLog(@"Emitting property %@ triggered by method %@", property.name, method.name);
+//            [self visitProperty:property];
+//            [propertyState useProperty:property];
+//        } else {
+            //CDLog(@"Have already emitted property %@ triggered by method %@", property.name, method.name);
+//        }
+//    }
 }
 
 - (void)visitIvar:(CDOCInstanceVariable *)ivar;
@@ -198,8 +199,8 @@
     if ([remaining count] > 0) {
         [self.resultString appendString:@"\n"];
         [self.resultString appendFormat:@"// Remaining properties\n"];
-        //DLog(@"Warning: remaining undeclared property count: %u", [remaining count]);
-        //DLog(@"remaining: %@", remaining);
+        //CDLog(@"Warning: remaining undeclared property count: %u", [remaining count]);
+        //CDLog(@"remaining: %@", remaining);
         for (CDOCProperty *property in remaining)
             [self visitProperty:property];
     }
@@ -217,55 +218,75 @@
 
 - (void)_visitProperty:(CDOCProperty *)property parsedType:(CDType *)parsedType attributes:(NSArray *)attrs;
 {
-    NSString *backingVar = nil;
-    BOOL isDynamic = NO;
+//    NSString *backingVar = nil;
+//    BOOL isDynamic = NO;
+//    
+//    NSMutableArray *alist = [[NSMutableArray alloc] init];
+//    NSMutableArray *unknownAttrs = [[NSMutableArray alloc] init];
+//    
+//    // objc_v2_encode_prop_attr() in gcc/objc/objc-act.c
+//    
+//    for (NSString *attr in attrs) {
+//        if ([attr hasPrefix:@"T"]) {
+//            CDLogVerbose(@"Warning: Property attribute 'T' should occur only occur at the beginning");
+//        } else if ([attr hasPrefix:@"R"]) {
+//            [alist addObject:@"readonly"];
+//        } else if ([attr hasPrefix:@"C"]) {
+//            [alist addObject:@"copy"];
+//        } else if ([attr hasPrefix:@"&"]) {
+//            [alist addObject:@"strong"];
+//        } else if ([attr hasPrefix:@"G"]) {
+//            [alist addObject:[NSString stringWithFormat:@"getter=%@", [attr substringFromIndex:1]]];
+//        } else if ([attr hasPrefix:@"S"]) {
+//            [alist addObject:[NSString stringWithFormat:@"setter=%@", [attr substringFromIndex:1]]];
+//        } else if ([attr hasPrefix:@"V"]) {
+//            backingVar = [attr substringFromIndex:1];
+//        } else if ([attr hasPrefix:@"N"]) {
+//            [alist addObject:@"nonatomic"];
+//        } else if ([attr hasPrefix:@"W"]) {
+//            // @property(assign) __weak NSObject *prop;
+//            // Only appears with GC.
+//            [alist addObject:@"weak"];
+//        } else if ([attr hasPrefix:@"P"]) {
+//            // @property(assign) __strong NSObject *prop;
+//            // Only appears with GC.
+//            // This is the default.
+//        } else if ([attr hasPrefix:@"D"]) {
+//            // Dynamic property.  Implementation supplied at runtime.
+//            // @property int prop; // @dynamic prop;
+//            isDynamic = YES;
+//        } else {
+//            CDLogVerbose(@"Warning: Unknown property attribute '%@'", attr);
+//            [unknownAttrs addObject:attr];
+//        }
+//    }
+//    
+//    if (property.isClass) {
+//        [alist addObject:@"class"];
+//    }
+    NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights = self.classDump.propertyAttributeTypeWeights;
+    NSArray<CDOCPropertyAttribute *> *propertyAttributes = nil;
+    if (propertyAttributeTypeWeights) {
+        propertyAttributes = [property.detailAttributes sortedArrayUsingComparator:^NSComparisonResult(CDOCPropertyAttribute *attribute1 , CDOCPropertyAttribute *attribute2) {
+            CDOCPropertyAttributeType type1 = attribute1.type;
+            CDOCPropertyAttributeType type2 = attribute2.type;
+            NSNumber *weight1 = propertyAttributeTypeWeights[type1];
+            NSNumber *weight2 = propertyAttributeTypeWeights[type2];
+            return [weight1 compare:weight2];
+        }];
+    } else {
+        propertyAttributes = property.detailAttributes;
+    }
     
-    NSMutableArray *alist = [[NSMutableArray alloc] init];
-    NSMutableArray *unknownAttrs = [[NSMutableArray alloc] init];
-    
-    // objc_v2_encode_prop_attr() in gcc/objc/objc-act.c
-    
-    for (NSString *attr in attrs) {
-        if ([attr hasPrefix:@"T"]) {
-            VerboseLog(@"Warning: Property attribute 'T' should occur only occur at the beginning");
-        } else if ([attr hasPrefix:@"R"]) {
-            [alist addObject:@"readonly"];
-        } else if ([attr hasPrefix:@"C"]) {
-            [alist addObject:@"copy"];
-        } else if ([attr hasPrefix:@"&"]) {
-            [alist addObject:@"strong"];
-        } else if ([attr hasPrefix:@"G"]) {
-            [alist addObject:[NSString stringWithFormat:@"getter=%@", [attr substringFromIndex:1]]];
-        } else if ([attr hasPrefix:@"S"]) {
-            [alist addObject:[NSString stringWithFormat:@"setter=%@", [attr substringFromIndex:1]]];
-        } else if ([attr hasPrefix:@"V"]) {
-            backingVar = [attr substringFromIndex:1];
-        } else if ([attr hasPrefix:@"N"]) {
-            [alist addObject:@"nonatomic"];
-        } else if ([attr hasPrefix:@"W"]) {
-            // @property(assign) __weak NSObject *prop;
-            // Only appears with GC.
-            [alist addObject:@"weak"];
-        } else if ([attr hasPrefix:@"P"]) {
-            // @property(assign) __strong NSObject *prop;
-            // Only appears with GC.
-            // This is the default.
-        } else if ([attr hasPrefix:@"D"]) {
-            // Dynamic property.  Implementation supplied at runtime.
-            // @property int prop; // @dynamic prop;
-            isDynamic = YES;
+    NSArray<NSString *> *propertyAttributeStrings = [propertyAttributes map:^NSString * _Nonnull(CDOCPropertyAttribute * _Nonnull attribute) {
+        if (attribute.value != nil) {
+            return [NSString stringWithFormat:@"%@=%@", attribute.name, attribute.value];
         } else {
-            VerboseLog(@"Warning: Unknown property attribute '%@'", attr);
-            [unknownAttrs addObject:attr];
+            return attribute.name;
         }
-    }
-    
-    if (property.isClass) {
-        [alist addObject:@"class"];
-    }
-    
-    if ([alist count] > 0) {
-        [self.resultString appendFormat:@"@property (%@) ", [alist componentsJoinedByString:@", "]];
+    }];
+    if ([propertyAttributeStrings count] > 0) {
+        [self.resultString appendFormat:@"@property (%@) ", [propertyAttributeStrings componentsJoinedByString:@", "]];
     } else {
         [self.resultString appendString:@"@property "];
     }
@@ -274,20 +295,20 @@
     [self.resultString appendFormat:@"%@;", formattedString];
     
     if (self.shouldAppendPropertyComments) {
-        if (isDynamic) {
+        if (property.isDynamic) {
             [self.resultString appendFormat:@" // @dynamic %@;", property.name];
-        } else if (backingVar != nil) {
-            if ([backingVar isEqualToString:property.name]) {
+        } else if (property.ivar != nil) {
+            if ([property.ivar isEqualToString:property.name]) {
                 [self.resultString appendFormat:@" // @synthesize %@;", property.name];
             } else {
-                [self.resultString appendFormat:@" // @synthesize %@=%@;", property.name, backingVar];
+                [self.resultString appendFormat:@" // @synthesize %@=%@;", property.name, property.ivar];
             }
         }
     }
     
     [self.resultString appendString:@"\n"];
-    if ([unknownAttrs count] > 0) {
-        [self.resultString appendFormat:@"// Preceding property had unknown attributes: %@\n", [unknownAttrs componentsJoinedByString:@","]];
+    if ([property.unknownAttributes count] > 0) {
+        [self.resultString appendFormat:@"// Preceding property had unknown attributes: %@\n", [property.unknownAttributes componentsJoinedByString:@","]];
         if ([property.attributeString length] > 80) {
             [self.resultString appendFormat:@"// Original attribute string (following type): %@\n\n", property.attributeStringAfterType];
         } else {

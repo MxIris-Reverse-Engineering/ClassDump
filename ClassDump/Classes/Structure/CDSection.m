@@ -22,7 +22,7 @@
     if ((self = [super init])) {
         _segment = segment;
         if (cursor.remaining <= 16) {
-            NSLog(@"cursor remaining: %lu is bad, gonna crash. investigate later.", cursor.remaining);
+            CDLog(@"cursor remaining: %lu is bad, gonna crash. investigate later.", cursor.remaining);
             //return nil;
         }
         _sectionName = [cursor readStringOfLength:16 encoding:NSASCIIStringEncoding];
@@ -82,7 +82,7 @@
 {
     NSParameterAssert([self containsAddress:address]);
     NSUInteger offset = _section.offset + address - _section.addr;
-    VerboseLog(@"%s %lu + %lu - %lu = %lu (%016llx)", _cmds, _section.offset, address, _section.addr, offset, offset);
+    CDLogVerbose(@"%s %lu + %lu - %lu = %lu (%016llx)", __PRETTY_FUNCTION__, _section.offset, address, _section.addr, offset, offset);
     return offset;
 }
 

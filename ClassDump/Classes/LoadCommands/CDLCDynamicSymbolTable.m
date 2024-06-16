@@ -42,27 +42,27 @@
         _dysymtab.locreloff      = [cursor readInt32];
         _dysymtab.nlocrel        = [cursor readInt32];
 #if 0
-        VerboseLog(@"ilocalsym:      0x%08x  %d", dysymtab.ilocalsym, dysymtab.ilocalsym);
-        VerboseLog(@"nlocalsym:      0x%08x  %d", dysymtab.nlocalsym, dysymtab.nlocalsym);
-        VerboseLog(@"iextdefsym:     0x%08x  %d", dysymtab.iextdefsym, dysymtab.iextdefsym);
-        VerboseLog(@"nextdefsym:     0x%08x  %d", dysymtab.nextdefsym, dysymtab.nextdefsym);
-        VerboseLog(@"iundefsym:      0x%08x  %d", dysymtab.iundefsym, dysymtab.iundefsym);
-        VerboseLog(@"nundefsym:      0x%08x  %d", dysymtab.nundefsym, dysymtab.nundefsym);
+        CDLogVerbose(@"ilocalsym:      0x%08x  %d", dysymtab.ilocalsym, dysymtab.ilocalsym);
+        CDLogVerbose(@"nlocalsym:      0x%08x  %d", dysymtab.nlocalsym, dysymtab.nlocalsym);
+        CDLogVerbose(@"iextdefsym:     0x%08x  %d", dysymtab.iextdefsym, dysymtab.iextdefsym);
+        CDLogVerbose(@"nextdefsym:     0x%08x  %d", dysymtab.nextdefsym, dysymtab.nextdefsym);
+        CDLogVerbose(@"iundefsym:      0x%08x  %d", dysymtab.iundefsym, dysymtab.iundefsym);
+        CDLogVerbose(@"nundefsym:      0x%08x  %d", dysymtab.nundefsym, dysymtab.nundefsym);
         
-        VerboseLog(@"tocoff:         0x%08x  %d", dysymtab.tocoff, dysymtab.tocoff);
-        VerboseLog(@"ntoc:           0x%08x  %d", dysymtab.ntoc, dysymtab.ntoc);
-        VerboseLog(@"modtaboff:      0x%08x  %d", dysymtab.modtaboff, dysymtab.modtaboff);
-        VerboseLog(@"nmodtab:        0x%08x  %d", dysymtab.nmodtab, dysymtab.nmodtab);
+        CDLogVerbose(@"tocoff:         0x%08x  %d", dysymtab.tocoff, dysymtab.tocoff);
+        CDLogVerbose(@"ntoc:           0x%08x  %d", dysymtab.ntoc, dysymtab.ntoc);
+        CDLogVerbose(@"modtaboff:      0x%08x  %d", dysymtab.modtaboff, dysymtab.modtaboff);
+        CDLogVerbose(@"nmodtab:        0x%08x  %d", dysymtab.nmodtab, dysymtab.nmodtab);
         
-        VerboseLog(@"extrefsymoff:   0x%08x  %d", dysymtab.extrefsymoff, dysymtab.extrefsymoff);
-        VerboseLog(@"nextrefsyms:    0x%08x  %d", dysymtab.nextrefsyms, dysymtab.nextrefsyms);
-        VerboseLog(@"indirectsymoff: 0x%08x  %d", dysymtab.indirectsymoff, dysymtab.indirectsymoff);
-        VerboseLog(@"nindirectsyms:  0x%08x  %d", dysymtab.nindirectsyms, dysymtab.nindirectsyms);
+        CDLogVerbose(@"extrefsymoff:   0x%08x  %d", dysymtab.extrefsymoff, dysymtab.extrefsymoff);
+        CDLogVerbose(@"nextrefsyms:    0x%08x  %d", dysymtab.nextrefsyms, dysymtab.nextrefsyms);
+        CDLogVerbose(@"indirectsymoff: 0x%08x  %d", dysymtab.indirectsymoff, dysymtab.indirectsymoff);
+        CDLogVerbose(@"nindirectsyms:  0x%08x  %d", dysymtab.nindirectsyms, dysymtab.nindirectsyms);
         
-        VerboseLog(@"extreloff:      0x%08x  %d", dysymtab.extreloff, dysymtab.extreloff);
-        VerboseLog(@"nextrel:        0x%08x  %d", dysymtab.nextrel, dysymtab.nextrel);
-        VerboseLog(@"locreloff:      0x%08x  %d", dysymtab.locreloff, dysymtab.locreloff);
-        VerboseLog(@"nlocrel:        0x%08x  %d", dysymtab.nlocrel, dysymtab.nlocrel);
+        CDLogVerbose(@"extreloff:      0x%08x  %d", dysymtab.extreloff, dysymtab.extreloff);
+        CDLogVerbose(@"nextrel:        0x%08x  %d", dysymtab.nextrel, dysymtab.nextrel);
+        CDLogVerbose(@"locreloff:      0x%08x  %d", dysymtab.locreloff, dysymtab.locreloff);
+        CDLogVerbose(@"nlocrel:        0x%08x  %d", dysymtab.nlocrel, dysymtab.nlocrel);
 #endif
         
         _externalRelocationEntries = [[NSMutableArray alloc] init];
@@ -89,22 +89,22 @@
     
     CDMachOFileDataCursor *cursor = [[CDMachOFileDataCursor alloc] initWithFile:self.machOFile offset:_dysymtab.extreloff];
 
-    VerboseLog(@"indirectsymoff: %u", _dysymtab.indirectsymoff);
-    VerboseLog(@"nindirectsyms:  %u", _dysymtab.nindirectsyms);
+    CDLogVerbose(@"indirectsymoff: %u", _dysymtab.indirectsymoff);
+    CDLogVerbose(@"nindirectsyms:  %u", _dysymtab.nindirectsyms);
 #if 0
     [cursor setOffset:[self.machOFile offset] + dysymtab.indirectsymoff];
     for (uint32_t index = 0; index < dysymtab.nindirectsyms; index++) {
         // From loader.h: An indirect symbol table entry is simply a 32bit index into the symbol table to the symbol that the pointer or stub is referring to.
         uint32_t val = [cursor readInt32];
-        VerboseLog(@"%3u: %08x (%u)", index, val, val);
+        CDLogVerbose(@"%3u: %08x (%u)", index, val, val);
     }
 #endif
 
-    VerboseLog(@"extreloff: %u", _dysymtab.extreloff);
-    VerboseLog(@"nextrel:   %u", _dysymtab.nextrel);
+    CDLogVerbose(@"extreloff: %u", _dysymtab.extreloff);
+    CDLogVerbose(@"nextrel:   %u", _dysymtab.nextrel);
     if (_dysymtab.nextrel > 0){
-        VerboseLog(@"     address   val       symbolnum  pcrel  len  ext  type");
-        VerboseLog(@"---  --------  --------  ---------  -----  ---  ---  ----");
+        CDLogVerbose(@"     address   val       symbolnum  pcrel  len  ext  type");
+        CDLogVerbose(@"---  --------  --------  ---------  -----  ---  ---  ----");
     }
     for (uint32_t index = 0; index < _dysymtab.nextrel; index++) {
         struct relocation_info rinfo;
@@ -117,14 +117,14 @@
         rinfo.r_length    = (val & 0x06000000) >> 25;
         rinfo.r_extern    = (val & 0x08000000) >> 27;
         rinfo.r_type      = (val & 0xf0000000) >> 28;
-        VerboseLog(@"%3d: %08x  %08x   %08x      %01x    %01x    %01x     %01x", index, rinfo.r_address, val,
+        CDLogVerbose(@"%3d: %08x  %08x   %08x      %01x    %01x    %01x     %01x", index, rinfo.r_address, val,
               rinfo.r_symbolnum, rinfo.r_pcrel, rinfo.r_length, rinfo.r_extern, rinfo.r_type);
 
         CDRelocationInfo *ri = [[CDRelocationInfo alloc] initWithInfo:rinfo];
         [externalRelocationEntries addObject:ri];
     }
 
-    //VerboseLog(@"externalRelocationEntries: %@", externalRelocationEntries);
+    //CDLogVerbose(@"externalRelocationEntries: %@", externalRelocationEntries);
 
     // r_address is purported to be the offset from the vmaddr of the first segment, but...
     // It seems to be from the first segment with r/w initprot.

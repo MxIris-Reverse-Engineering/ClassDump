@@ -35,12 +35,12 @@
 
 - (void)addClass:(CDOCClass *)aClass;
 {
-    [self.classes addObject:aClass];
+    [_classes addObject:aClass];
 }
 
 - (void)addCategory:(CDOCCategory *)category;
 {
-    [self.categories addObject:category];
+    [_categories addObject:category];
 }
 
 @end

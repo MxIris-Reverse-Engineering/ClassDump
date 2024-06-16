@@ -62,7 +62,7 @@
         result = OSReadLittleInt16([_data bytes], _offset) & 0xFF;
         _offset += sizeof(result);
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
         result = 0;
     }
 
@@ -77,7 +77,7 @@
         result = OSReadLittleInt16([_data bytes], _offset);
         _offset += sizeof(result);
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
         result = 0;
     }
 
@@ -92,7 +92,7 @@
         result = OSReadLittleInt32([_data bytes], _offset);
         _offset += sizeof(result);
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
         result = 0;
     }
 
@@ -105,11 +105,11 @@
 
     if (_offset + sizeof(result) <= [_data length]) {
 //        uint8_t *ptr = [_data bytes] + _offset;
-//        DLog(@"%016llx: %02x %02x %02x %02x %02x %02x %02x %02x", _offset, ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5], ptr[6], ptr[7]);
+//        CDLog(@"%016llx: %02x %02x %02x %02x %02x %02x %02x %02x", _offset, ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5], ptr[6], ptr[7]);
         result = OSReadLittleInt64([_data bytes], _offset);
         _offset += sizeof(result);
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
         result = 0;
     }
 
@@ -124,7 +124,7 @@
         result = OSReadBigInt16([_data bytes], _offset);
         _offset += sizeof(result);
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
         result = 0;
     }
 
@@ -139,7 +139,7 @@
         result = OSReadBigInt32([_data bytes], _offset);
         _offset += sizeof(result);
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
         result = 0;
     }
 
@@ -154,7 +154,7 @@
         result = OSReadBigInt64([_data bytes], _offset);
         _offset += sizeof(result);
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
         result = 0;
     }
 
@@ -197,7 +197,7 @@
         [data appendBytes:(uint8_t *)[_data bytes] + _offset length:length];
         _offset += length;
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
     }
 }
 
@@ -207,7 +207,7 @@
         memcpy(buf, (uint8_t *)[_data bytes] + _offset, length);
         _offset += length;
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
     }
 }
 
@@ -232,7 +232,7 @@
             // Jump through some hoops if the length is padded with zero bytes, as in the case of 10.5's Property List Editor and iSync Plug-in Maker.
             buf = malloc(length + 1);
             if (buf == NULL) {
-                DLog(@"Error: malloc() failed.");
+                CDLog(@"Error: malloc() failed.");
                 return nil;
             }
 
@@ -249,7 +249,7 @@
             return str;
         }
     } else {
-        [NSException raise:NSRangeException format:@"Trying to read past end in %s", _cmds];
+        [NSException raise:NSRangeException format:@"Trying to read past end in %s", __PRETTY_FUNCTION__];
     }
 
     return nil;

@@ -14,7 +14,8 @@ struct CDTestStructA {
 };
 
 @interface CDTestObjectA : NSObject
-
+@property (nonatomic, getter=isEnabled) BOOL enabled;
+@property (nonatomic, setter=_setIntValue:) int _intValue;
 @property (nonatomic, strong) id objectValue;
 @property (nonatomic) BOOL boolValue;
 @property (nonatomic, class, strong, readonly) id objectClassProperty;

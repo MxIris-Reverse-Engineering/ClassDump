@@ -24,7 +24,7 @@
 
 - (instancetype)initWithFile:(CDMachOFile *)machOFile;
 {
-    VerboseLog(@"initWithFile: %@", machOFile);
+    CDLogVerbose(@"initWithFile: %@", machOFile);
     return [self initWithFile:machOFile offset:0];
 }
 
@@ -33,7 +33,7 @@
     if (offset == 0){
         offset = 4096;
     }
-    VerboseLog(@"initWithFile: %@ offset: 0x%08lx", machOFile, offset);
+    CDLogVerbose(@"initWithFile: %@ offset: 0x%08lx", machOFile, offset);
     
     if ((self = [super initWithData:machOFile.data])) {
         self.machOFile = machOFile;
@@ -45,7 +45,7 @@
 
 - (instancetype)initWithFile:(CDMachOFile *)machOFile address:(NSUInteger)address;
 {
-    VerboseLog(@"initWithFile: %@ address: 0x%08lx", machOFile, address);
+    CDLogVerbose(@"initWithFile: %@ address: 0x%08lx", machOFile, address);
     if ((self = [super initWithData:machOFile.data])) {
         self.machOFile = machOFile;
         [self setAddress:address];
@@ -74,9 +74,9 @@
 
 - (void)setAddress:(NSUInteger)address;
 {
-    //VerboseLog(@"%s 0x%08lx", _cmds, address);
+    //CDLogVerbose(@"%s 0x%08lx", __PRETTY_FUNCTION__, address);
     NSUInteger dataOffset = [_machOFile dataOffsetForAddress:address];
-    VerboseLog(@"dataOffset: 0x%08lx for address: 0x%08lx", dataOffset, address);
+    CDLogVerbose(@"dataOffset: 0x%08lx for address: 0x%08lx", dataOffset, address);
     if (dataOffset == 0) dataOffset = address;
     [self setOffset:dataOffset];
 }

@@ -82,7 +82,7 @@
         
         [cursor readInt32];
         uint32_t v2 = [cursor readInt32];
-        //DLog(@"%s: %08x %08x", _cmds, v1, v2);
+        //CDLog(@"%s: %08x %08x", __PRETTY_FUNCTION__, v1, v2);
         // v2 == 0 -> Objective-C Garbage Collection: Unsupported
         // v2 == 2 -> Supported
         // v2 == 6 -> Required
@@ -135,13 +135,13 @@
 #pragma mark - Processing
 
 - (void)processStoppingEarly:(BOOL)stopEarly {
-    ILOG_CMD;
+    CDLogInfo_CMD;
     if (self.machOFile.isEncrypted == NO && self.machOFile.canDecryptAllSegments) {
         [self.machOFile.symbolTable loadSymbols];
-        //VerboseLog(@"SymbolTable: %@", self.machOFile.symbolTable);
+        //CDLogVerbose(@"SymbolTable: %@", self.machOFile.symbolTable);
         [self.machOFile.dynamicSymbolTable loadSymbols];
         if (stopEarly){
-            InfoLog(@"end of the line!");
+            CDLogInfo(@"end of the line!");
             exit(0);
         }
         if (!_shallow) {
@@ -158,11 +158,11 @@
 
 - (void)process
 {
-    ILOG_CMD;
+    CDLogInfo_CMD;
     /*
     if (self.machOFile.isEncrypted == NO && self.machOFile.canDecryptAllSegments) {
         [self.machOFile.symbolTable loadSymbols];
-        //VerboseLog(@"SymbolTable: %@", self.machOFile.symbolTable);
+        //CDLogVerbose(@"SymbolTable: %@", self.machOFile.symbolTable);
         [self.machOFile.dynamicSymbolTable loadSymbols];
 
         [self loadProtocols];
@@ -219,17 +219,17 @@
     // TODO: Sort protocols by dependency
     // TODO: (2004-01-30) It looks like protocols might be defined in more than one file.  i.e. NSObject.
     // TODO: (2004-02-02) Looks like we need to record the order the protocols were encountered, or just always sort protocols
-    for (CDOCProtocol *protocol in [self.protocolUniquer uniqueProtocolsSortedByName])
+    for (CDOCProtocol *protocol in [self.protocolUniquer uniqueProtocolsSortedByName]) {
         [protocol recursivelyVisit:visitor];
-
+    }
     if ([[visitor classDump] shouldSortClassesByInheritance]) {
         [classesAndCategories sortTopologically];
-    } else if ([[visitor classDump] shouldSortClasses])
+    } else if ([[visitor classDump] shouldSortClasses]) {
         [classesAndCategories sortUsingSelector:@selector(ascendingCompareByName:)];
-
-    for (id aClassOrCategory in classesAndCategories)
+    }
+    for (id aClassOrCategory in classesAndCategories) {
         [aClassOrCategory recursivelyVisit:visitor];
-
+    }
     [visitor didVisitObjectiveCProcessor:self];
 }
 

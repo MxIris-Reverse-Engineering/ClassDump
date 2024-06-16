@@ -51,7 +51,7 @@
     
     for (NSNumber *key in [[_protocolsByAddress allKeys] sortedArrayUsingSelector:@selector(compare:)]) {
         CDOCProtocol *p1 = _protocolsByAddress[key];
-        VerboseLog(@"p1 name: %@", p1);
+        CDLogVerbose(@"p1 name: %@", p1);
         if (p1.name == nil) {
             continue;
         }
@@ -66,11 +66,11 @@
         if (key){
             _uniqueProtocolsByAddress[key] = uniqueProtocol;
         } else {
-            VerboseLog(@"no key for %@", uniqueProtocol);
+            CDLogVerbose(@"no key for %@", uniqueProtocol);
         }
     }
     
-    InfoLog(@"uniqued protocol names: %@", [[[_uniqueProtocolsByName allKeys] sortedArrayUsingSelector:@selector(compare:)] componentsJoinedByString:@", "]);
+    CDLogInfo(@"uniqued protocol names: %@", [[[_uniqueProtocolsByName allKeys] sortedArrayUsingSelector:@selector(compare:)] componentsJoinedByString:@", "]);
     
     // And finally fill in adopted protocols, instance and class methods.  And properties.
     for (NSNumber *key in [[_protocolsByAddress allKeys] sortedArrayUsingSelector:@selector(compare:)]) {
@@ -89,7 +89,7 @@
         [uniqueProtocol mergePropertiesFromProtocol:p1];
     }
     
-    InfoLog(@"protocolsByName: %@", _uniqueProtocolsByName);
+    CDLogInfo(@"protocolsByName: %@", _uniqueProtocolsByName);
 }
 
 #pragma mark - Results
@@ -98,7 +98,7 @@
 
 - (NSArray *)uniqueProtocolsAtAddresses:(NSArray *)addresses;
 {
-    InfoLog(@"%s: addresses: %@", _cmds, addresses);
+    CDLogInfo(@"%s: addresses: %@", __PRETTY_FUNCTION__, addresses);
     NSMutableArray *protocols = [NSMutableArray array];
 
     for (NSNumber *protocolAddress in addresses) {

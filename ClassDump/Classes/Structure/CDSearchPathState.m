@@ -38,7 +38,7 @@
     if ([self.searchPathStack count] > 0) {
         [self.searchPathStack removeLastObject];
     } else {
-        DLog(@"Warning: Unbalanced popSearchPaths");
+        CDLog(@"Warning: Unbalanced popSearchPaths");
     }
 }
 

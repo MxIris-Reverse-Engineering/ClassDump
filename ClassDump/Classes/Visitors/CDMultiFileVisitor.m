@@ -200,11 +200,11 @@
         filename = [NSString stringWithFormat:@"%@+Protocol.h", protocol.name];
     }
 
+    self.fileNamesByProtocolName[protocol.name] = filename;
+
     if (self.outputPath != nil) {
         filename = [self.outputPath stringByAppendingPathComponent:filename];
     }
-
-    self.fileNamesByProtocolName[protocol.name] = filename;
 
     [[self.resultString dataUsingEncoding:NSUTF8StringEncoding] writeToFile:filename atomically:YES];
 }
@@ -316,12 +316,12 @@
             BOOL result = [fileManager createDirectoryAtPath:self.outputPath withIntermediateDirectories:YES attributes:nil error:&error];
 
             if (result == NO) {
-                DLog(@"Error: Couldn't create output directory: %@", self.outputPath);
-                DLog(@"error: %@", error); // TODO: Test this
+                CDLog(@"Error: Couldn't create output directory: %@", self.outputPath);
+                CDLog(@"error: %@", error); // TODO: Test this
                 return;
             }
         } else if (isDirectory == NO) {
-            DLog(@"Error: File exists at output path: %@", self.outputPath);
+            CDLog(@"Error: File exists at output path: %@", self.outputPath);
             return;
         }
     }
