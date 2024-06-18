@@ -368,6 +368,7 @@
 // Just top level structures
 - (void)phase0RegisterStructuresWithType:(CDType *)type usedInMethod:(BOOL)isUsedInMethod;
 {
+    if (!type) return;
     // ^{ComponentInstanceRecord=}
     if (type.subtype != nil) {
         [self phase0RegisterStructuresWithType:type.subtype usedInMethod:isUsedInMethod];
@@ -389,6 +390,7 @@
 // Recursively go through type, registering structs/unions.
 - (void)phase1RegisterStructuresWithType:(CDType *)type;
 {
+    if (!type) return;
     // ^{ComponentInstanceRecord=}
     if (type.subtype != nil)
         [self phase1RegisterStructuresWithType:type.subtype];
@@ -419,6 +421,7 @@
 // Recursive, bottom-up
 - (void)_phase2MergeWithType:(CDType *)type;
 {
+    if (!type) return;
     [self _phase2MergeWithType:type.subtype];
     for (CDType *member in type.members)
         [self _phase2MergeWithType:member];
@@ -444,6 +447,7 @@
 
 - (void)phase3RegisterWithType:(CDType *)type;
 {
+    if (!type) return;
     [self phase3RegisterWithType:type.subtype];
     
     if (type.primitiveType == '{' || type.primitiveType == '(') {
@@ -463,6 +467,7 @@
 // Bottom-up
 - (void)phase3MergeWithType:(CDType *)type;
 {
+    if (!type) return;
     [self phase3MergeWithType:type.subtype];
     for (CDType *member in type.members) {
         [self phase3MergeWithType:member];

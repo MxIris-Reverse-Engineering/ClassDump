@@ -282,6 +282,7 @@
 
 - (NSString *)formattedString:(NSString *)previousName type:(CDType *)type level:(NSUInteger)level;
 {
+    if (!type) return;
     NSString *result, *currentName;
     NSString *baseType, *memberString;
 
