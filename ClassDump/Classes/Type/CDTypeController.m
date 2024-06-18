@@ -11,6 +11,8 @@
 #import <ClassDump/CDType.h>
 #import <ClassDump/ClassDumpUtils.h>
 #import <ClassDump/CDClassDumpConfiguration.h>
+#import <ClassDump/CDTypeName.h>
+#import <ClassDump/CDTypeLexer.h> // For T_NAMED_OBJECT
 
 
 @interface CDTypeController ()
@@ -36,29 +38,29 @@
     if ((self = [super init])) {
         _configuration = configuration;
         
-        _ivarTypeFormatter = [[CDTypeFormatter alloc] init];
+        _ivarTypeFormatter = [[CDTypeFormatter alloc] initWithConfiguration:configuration];
         _ivarTypeFormatter.shouldExpand = NO;
         _ivarTypeFormatter.shouldAutoExpand = YES;
         _ivarTypeFormatter.baseLevel = 1;
-        _ivarTypeFormatter.typeController = self;
+        _ivarTypeFormatter.delegate = self;
         
-        _methodTypeFormatter = [[CDTypeFormatter alloc] init];
+        _methodTypeFormatter = [[CDTypeFormatter alloc] initWithConfiguration:configuration];
         _methodTypeFormatter.shouldExpand = NO;
         _methodTypeFormatter.shouldAutoExpand = NO;
         _methodTypeFormatter.baseLevel = 0;
-        _methodTypeFormatter.typeController = self;
+        _methodTypeFormatter.delegate = self;
         
-        _propertyTypeFormatter = [[CDTypeFormatter alloc] init];
+        _propertyTypeFormatter = [[CDTypeFormatter alloc] initWithConfiguration:configuration];
         _propertyTypeFormatter.shouldExpand = NO;
         _propertyTypeFormatter.shouldAutoExpand = NO;
         _propertyTypeFormatter.baseLevel = 0;
-        _propertyTypeFormatter.typeController = self;
+        _propertyTypeFormatter.delegate = self;
         
-        _structDeclarationTypeFormatter = [[CDTypeFormatter alloc] init];
+        _structDeclarationTypeFormatter = [[CDTypeFormatter alloc] initWithConfiguration:configuration];
         _structDeclarationTypeFormatter.shouldExpand = YES; // But don't expand named struct members...
         _structDeclarationTypeFormatter.shouldAutoExpand = YES;
         _structDeclarationTypeFormatter.baseLevel = 0;
-        _structDeclarationTypeFormatter.typeController = self; // But need to ignore some things?
+        _structDeclarationTypeFormatter.delegate = self; // But need to ignore some things?
         
         _structureTable = [[CDStructureTable alloc] init];
         _structureTable.anonymousBaseName = @"CDStruct_";
@@ -353,5 +355,136 @@
     
     return nil;
 }
+
+#pragma mark -
+
+- (void)phase:(NSUInteger)phase type:(CDType *)type usedInMethod:(BOOL)isUsedInMethod;
+{
+    if (phase == 0) {
+        [self phase0RegisterStructuresWithType:type usedInMethod:isUsedInMethod];
+    }
+}
+
+// Just top level structures
+- (void)phase0RegisterStructuresWithType:(CDType *)type usedInMethod:(BOOL)isUsedInMethod;
+{
+    // ^{ComponentInstanceRecord=}
+    if (type.subtype != nil) {
+        [self phase0RegisterStructuresWithType:type.subtype usedInMethod:isUsedInMethod];
+    }
+
+    if ((type.primitiveType == '{' || type.primitiveType == '(') && [type.members count] > 0) {
+        [self phase0RegisterStructure:type usedInMethod:isUsedInMethod];
+    } else if (type.primitiveType == T_FUNCTION_POINTER_TYPE && type.types == nil) {
+        _hasUnknownFunctionPointers = YES;
+    } else if (type.primitiveType == T_BLOCK_TYPE && type.types == nil) {
+        _hasUnknownBlocks = YES;
+    }
+}
+
+
+
+#pragma mark - Phase 1
+
+// Recursively go through type, registering structs/unions.
+- (void)phase1RegisterStructuresWithType:(CDType *)type;
+{
+    // ^{ComponentInstanceRecord=}
+    if (type.subtype != nil)
+        [self phase1RegisterStructuresWithType:type.subtype];
+
+    if ((type.primitiveType == '{' || type.primitiveType == '(') && [type.members count] > 0) {
+        [self phase1RegisterStructuresWithType:type];
+        for (CDType *member in type.members)
+            [self phase1RegisterStructuresWithType:member];
+    }
+}
+
+#pragma mark - Phase 2
+
+// This wraps the recursive method, optionally logging if anything changed.
+- (void)phase2MergeWithType:(CDType *)type;
+{
+//    NSString *before = type.typeString;
+    [self _phase2MergeWithType:type];
+//    NSString *after = type.typeString;
+//    if (phase2Debug && [before isEqualToString:after] == NO) {
+//        CDLog(@"----------------------------------------");
+//        CDLog(@"%s, merge changed type", __PRETTY_FUNCTION__);
+//        CDLog(@"before: %@", before);
+//        CDLog(@" after: %@", after);
+//    }
+}
+
+// Recursive, bottom-up
+- (void)_phase2MergeWithType:(CDType *)type;
+{
+    [self _phase2MergeWithType:type.subtype];
+    for (CDType *member in type.members)
+        [self _phase2MergeWithType:member];
+
+    if ((type.primitiveType == '{' || type.primitiveType == '(') && [type.members count] > 0) {
+        CDType *phase2Type = [self phase2ReplacementForType:type];
+        if (phase2Type != nil) {
+            // >0 members so we don't try replacing things like... {_xmlNode=^{_xmlNode}}
+            if ([type.members count] > 0 && [type canMergeWithType:phase2Type]) {
+                [type mergeWithType:phase2Type];
+            } else {
+//                if (phase2Debug) {
+//                    CDLog(@"Found phase2 type, but can't merge with it.");
+//                    CDLog(@"this: %@", [self typeString]);
+//                    CDLog(@"that: %@", [phase2Type typeString]);
+//                }
+            }
+        }
+    }
+}
+
+#pragma mark - Phase 3
+
+- (void)phase3RegisterWithType:(CDType *)type;
+{
+    [self phase3RegisterWithType:type.subtype];
+    
+    if (type.primitiveType == '{' || type.primitiveType == '(') {
+        [self phase3RegisterStructure:type /*count:1 usedInMethod:NO*/];
+    }
+}
+
+- (void)phase3RegisterMembersWithType:(CDType *)type;
+{
+    //CDLog(@" > %s %@", __PRETTY_FUNCTION__, [self typeString]);
+    for (CDType *member in type.members) {
+        [self phase3RegisterWithType:member];
+    }
+    //CDLog(@"<  %s", __PRETTY_FUNCTION__);
+}
+
+// Bottom-up
+- (void)phase3MergeWithType:(CDType *)type;
+{
+    [self phase3MergeWithType:type.subtype];
+    for (CDType *member in type.members) {
+        [self phase3MergeWithType:member];
+    }
+
+    if ((type.primitiveType == '{' || type.primitiveType == '(') && [type.members count] > 0) {
+        CDType *phase3Type = [self phase3ReplacementForType:type];
+        if (phase3Type != nil) {
+            // >0 members so we don't try replacing things like... {_xmlNode=^{_xmlNode}}
+            if ([type.members count] > 0 && [type canMergeWithType:phase3Type]) {
+                [type mergeWithType:phase3Type];
+            } else {
+#if 0
+                // This can happen in AU Lab, that struct has no members...
+                CDLog(@"Found phase3 type, but can't merge with it.");
+                CDLog(@"this: %@", self.typeString);
+                CDLog(@"that: %@", phase3Type.typeString);
+#endif
+            }
+        }
+    }
+}
+
 
 @end

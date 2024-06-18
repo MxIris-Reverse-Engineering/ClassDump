@@ -161,7 +161,7 @@
 - (void)registerTypesFromMethods:(NSOrderedSet *)methods withObject:(CDTypeController *)typeController phase:(NSUInteger)phase; {
     for (CDOCMethod *method in methods) {
         for (CDMethodType *methodType in method.parsedMethodTypes) {
-            [methodType.type phase:phase registerTypesWithObject:typeController usedInMethod:YES];
+            [typeController phase:phase type:methodType.type usedInMethod:YES];
         }
     }
 }

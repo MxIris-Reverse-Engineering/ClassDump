@@ -48,11 +48,11 @@
 //    - Makes the name independant of the order they were encountered (like the previous indexes were).  You can get meaningful diffs between
 //      framework changes now.
 
-#ifdef DEBUG
-static BOOL debug = YES;
-#else
-static BOOL debug = NO;
-#endif
+//#ifdef DEBUG
+//static BOOL debug = YES;
+//#else
+//static BOOL debug = NO;
+//#endif
 static BOOL debugNamedStructures = NO;
 static BOOL debugAnonStructures = NO;
 
@@ -152,7 +152,7 @@ static BOOL debugAnonStructures = NO;
 {
     CDLogVerbose(@"[%@] %s, changing struct names that start with $", self.identifier, __PRETTY_FUNCTION__);
     for (CDStructureInfo *info in [_phase0_structureInfo allValues]) {
-        [info.type phase0RecursivelyFixStructureNames:debug];
+        [info.type phase0RecursivelyFixStructureNames];
     }
 
     if ([_debugNames count] > 0) {
@@ -183,7 +183,7 @@ static BOOL debugAnonStructures = NO;
 - (void)runPhase1;
 {
     for (CDStructureInfo *info in [_phase0_structureInfo allValues]) {
-        [info.type phase1RegisterStructuresWithObject:self.typeController];
+        [self.typeController phase1RegisterStructuresWithType:info.type];
     }
 }
 
@@ -252,7 +252,7 @@ static BOOL debugAnonStructures = NO;
         // recursively (bottom up) try to merge substructures into that type, to get names/full types
         //CDLogVerbose(@"----------------------------------------");
         //CDLogVerbose(@"Trying phase2Merge with on %@", [[info type] typeString]);
-        [info.type phase2MergeWithTypeController:self.typeController debug:debug];
+        [self.typeController phase2MergeWithType:info.type];
     }
 
     // merge all mergeable infos at that level
@@ -439,7 +439,7 @@ static BOOL debugAnonStructures = NO;
         CDLogVerbose(@"[%@]  > %s", self.identifier, __PRETTY_FUNCTION__);
     
     for (CDStructureInfo *info in [_phase0_structureInfo allValues]) {
-        [info.type phase2MergeWithTypeController:self.typeController debug:debug];
+        [self.typeController phase2MergeWithType:info.type];
     }
 
     CDLogVerbose(@"[%@] <  %s", self.identifier, __PRETTY_FUNCTION__);
@@ -504,7 +504,7 @@ static BOOL debugAnonStructures = NO;
 
             if (info.referenceCount == referenceCount) { // i.e. the first time we've encounter this struct
                 // And then... add 1 reference for each substructure, stopping recursion when we've encountered a previous structure
-                [structure phase3RegisterMembersWithTypeController:self.typeController];
+                [self.typeController phase3RegisterMembersWithType:structure];
             }
         } else {
             info = _phase3_anonStructureInfo[key];
@@ -516,7 +516,7 @@ static BOOL debugAnonStructures = NO;
                 _phase3_anonStructureInfo[key] = info;
 
                 // And then... add 1 reference for each substructure, stopping recursion when we've encountered a previous structure
-                [structure phase3RegisterMembersWithTypeController:self.typeController];
+                [self.typeController phase3RegisterMembersWithType:structure];
             } else {
                 [info addReferenceCount:referenceCount];
                 if (isUsedInMethod)
@@ -537,7 +537,7 @@ static BOOL debugAnonStructures = NO;
 
                 if (info.referenceCount == referenceCount) { // i.e. the first time we've encounter this struct
                     // And then... add 1 reference for each substructure, stopping recursion when we've encountered a previous structure
-                    [structure phase3RegisterMembersWithTypeController:self.typeController];
+                    [self.typeController phase3RegisterMembersWithType:structure];
                 }
             }
         } else {
@@ -551,7 +551,7 @@ static BOOL debugAnonStructures = NO;
                 _phase3_namedStructureInfo[name] = info;
 
                 // And then... add 1 reference for each substructure, stopping recursion when we've encountered a previous structure
-                [structure phase3RegisterMembersWithTypeController:self.typeController];
+                [self.typeController phase3RegisterMembersWithType:structure];
             } else {
                 if ([_debugNames containsObject:name]) CDLogVerbose(@"[%@] %s, info before: %@", self.identifier, __PRETTY_FUNCTION__, [info shortDescription]);
                 // Handle the case where {foo} occurs before {foo=iii}
@@ -559,7 +559,7 @@ static BOOL debugAnonStructures = NO;
                     [info.type mergeWithType:structure];
 
                     // And then... add 1 reference for each substructure, stopping recursion when we've encountered a previous structure
-                    [structure phase3RegisterMembersWithTypeController:self.typeController];
+                    [self.typeController phase3RegisterMembersWithType:structure];
                 }
                 [info addReferenceCount:referenceCount];
                 if (isUsedInMethod)
@@ -689,7 +689,7 @@ static BOOL debugAnonStructures = NO;
             }
 
             CDType *type = info.type;
-            if ([typeFormatter.typeController shouldShowName:[type.typeName description]]) {
+            if ([typeFormatter.configuration shouldShowName:[type.typeName description]]) {
                 if (debugNamedStructures) {
                     [resultString appendFormat:@"// would normally show? %u\n", shouldShow];
                     [resultString appendFormat:@"// depth: %lu, ref count: %lu, used in method? %u\n", info.type.structureDepth, info.referenceCount, info.isUsedInMethod];
@@ -718,7 +718,7 @@ static BOOL debugAnonStructures = NO;
             }
 
             CDType *type = info.type;
-            if ([typeFormatter.typeController shouldShowName:[type.typeName description]]) {
+            if ([typeFormatter.configuration shouldShowName:[type.typeName description]]) {
                 if (debugNamedStructures) {
                     [resultString appendFormat:@"// depth: %lu, ref count: %lu, used in method? %u\n", info.type.structureDepth, info.referenceCount, info.isUsedInMethod];
                     //[resultString appendFormat:@"// typedefName: %@\n", [info typedefName]];

@@ -59,7 +59,7 @@
     [super registerTypesWithObject:typeController phase:phase];
 
     for (CDOCInstanceVariable *instanceVariable in self.instanceVariables) {
-        [instanceVariable.type phase:phase registerTypesWithObject:typeController usedInMethod:NO];
+        [typeController phase:phase type:instanceVariable.type usedInMethod:NO];
     }
 }
 

@@ -5,24 +5,37 @@
 
 #import <Foundation/Foundation.h>
 
-@class CDType, CDTypeController;
+@class CDType, CDTypeFormatter, CDTypeController, CDClassDumpConfiguration;
+
+@protocol CDTypeFormatterDelegate <NSObject>
+
+- (CDType *)typeFormatter:(CDTypeFormatter *)typeFormatter replacementForType:(CDType *)type;
+- (NSString *)typeFormatter:(CDTypeFormatter *)typeFormatter typedefNameForStructure:(CDType *)structureType level:(NSUInteger)level;
+- (void)typeFormatter:(CDTypeFormatter *)typeFormatter didReferenceClassName:(NSString *)name;
+- (void)typeFormatter:(CDTypeFormatter *)typeFormatter didReferenceProtocolNames:(NSArray *)names;
+- (BOOL)shouldExpandType:(CDType *)type;
+//// TODO: (2009-08-26) Ideally, just formatting a type shouldn't change it.  These changes should be done before, but this is handy.
+- (void)phase3MergeWithType:(CDType *)type;
+@end
+
 
 @interface CDTypeFormatter : NSObject
 
-@property (weak) CDTypeController *typeController;
+@property (weak) id<CDTypeFormatterDelegate> delegate;
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithConfiguration:(CDClassDumpConfiguration *)configuration;
 
 @property NSUInteger baseLevel;
 @property BOOL shouldExpand;
 @property BOOL shouldAutoExpand;
 @property BOOL shouldShowLexing;
-@property (readonly) BOOL shouldUseBOOLTypedef;
-@property (readonly) BOOL shouldUseNSIntegerTypedef;
-@property (readonly) BOOL shouldUseNSUIntegerTypedef;
+@property (strong, readonly) CDClassDumpConfiguration *configuration;
 
 - (NSString *)formatVariable:(NSString *)name type:(CDType *)type;
 - (NSString *)formatMethodName:(NSString *)name typeString:(NSString *)typeString;
 - (NSString *)typedefNameForStructure:(CDType *)structureType level:(NSUInteger)level;
-
+- (NSString *)formattedString:(NSString *)previousName type:(CDType *)type level:(NSUInteger)level;
 - (void)formattingDidReferenceClassName:(NSString *)name;
 - (void)formattingDidReferenceProtocolNames:(NSArray *)names;
 
