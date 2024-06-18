@@ -396,7 +396,7 @@
         [self phase1RegisterStructuresWithType:type.subtype];
 
     if ((type.primitiveType == '{' || type.primitiveType == '(') && [type.members count] > 0) {
-        [self phase1RegisterStructuresWithType:type];
+        [self phase1RegisterStructure:type];
         for (CDType *member in type.members)
             [self phase1RegisterStructuresWithType:member];
     }
