@@ -13,6 +13,7 @@
 #import <ClassDump/CDStructureInfo.h>
 #import <ClassDump/ClassDumpUtils.h>
 #import <ClassDump/CDExtensions.h>
+#import <ClassDump/CDClassDumpConfiguration.h>
 // Phase 0 - This is driven by CDClassDump, registering types from all of the classes, categories, and protocols.
 //         - This collects all the top level types (or struct/unions?), keeps a reference count, and flags any that were used in a method.
 //         - If a top level struct was used in a method, then the type MUST be declared at the top.

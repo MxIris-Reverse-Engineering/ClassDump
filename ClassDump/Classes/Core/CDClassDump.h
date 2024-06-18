@@ -37,24 +37,7 @@ extern NSString *CDErrorKey_Exception;
 
 @interface CDClassDump : NSObject
 
-@property BOOL shouldProcessRecursively;
-@property BOOL shouldSortClasses;
-@property BOOL shouldSortClassesByInheritance;
-@property BOOL shouldSortMethods;
-@property BOOL shouldShowIvarOffsets;
-@property BOOL shouldShowMethodAddresses;
-@property BOOL shouldShowHeader;
-@property BOOL shouldStripOverrides;
-@property BOOL shouldStripSynthesized;
-@property BOOL shouldStripCtor;
-@property BOOL shouldStripDtor;
-@property BOOL stopAfterPreProcessor;
-@property BOOL shallow;
-@property (strong, readonly, nullable) NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights;
-@property (strong, nullable) NSArray<CDOCPropertyAttributeType> *sortedPropertyAttributeTypes;
-@property CDArch targetArch;
-@property (strong, nullable) NSRegularExpression *regularExpression;
-@property (strong, nullable) NSString *sdkRoot;
+@property (strong, readonly) CDClassDumpConfiguration *configuration;
 @property (readonly) NSArray<CDMachOFile *> *machOFiles;
 @property (readonly) NSArray<CDObjectiveCProcessor *> *objcProcessors;
 @property (readonly) BOOL containsObjectiveCData;
@@ -73,13 +56,16 @@ extern NSString *CDErrorKey_Exception;
 
 - (void)registerTypes;
 
-- (BOOL)shouldShowName:(NSString *)name;
 - (void)showHeader;
+
 - (void)showLoadCommands;
 
 + (BOOL)printFixupData;
+
 + (BOOL)performClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath configuration:(CDClassDumpConfiguration *)configuration error:(NSError **)error;
+
 + (nullable CDClassDump *)classDumpContentsOfFile:(NSString *)file;
+
 + (NSDictionary *)getFileEntitlements:(NSString *)file;
 
 @end

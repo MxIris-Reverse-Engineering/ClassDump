@@ -15,7 +15,7 @@
 static BOOL debugMerge = NO;
 
 @interface CDType ()
-@property (nonatomic, readonly) NSString *formattedStringForSimpleType;
+//@property (nonatomic, readonly) NSString *formattedStringForSimpleType;
 @end
 
 #pragma mark -
@@ -462,19 +462,19 @@ static BOOL debugMerge = NO;
         case 'A':
             if (_subtype == nil) {
                 if (currentName == nil)
-                    result = [self formattedStringForSimpleType];
+                    result = [self formattedStringForSimpleTypeWithFormatter:typeFormatter];
                 else
-                    result = [NSString stringWithFormat:@"%@ %@", self.formattedStringForSimpleType, currentName];
+                    result = [NSString stringWithFormat:@"%@ %@", [self formattedStringForSimpleTypeWithFormatter:typeFormatter], currentName];
             } else
                 result = [NSString stringWithFormat:@"%@ %@",
-                          self.formattedStringForSimpleType, [_subtype formattedString:currentName formatter:typeFormatter level:level]];
+                          [self formattedStringForSimpleTypeWithFormatter:typeFormatter], [_subtype formattedString:currentName formatter:typeFormatter level:level]];
             break;
             
         default:
             if (currentName == nil)
-                result = self.formattedStringForSimpleType;
+                result = [self formattedStringForSimpleTypeWithFormatter:typeFormatter];
             else
-                result = [NSString stringWithFormat:@"%@ %@", self.formattedStringForSimpleType, currentName];
+                result = [NSString stringWithFormat:@"%@ %@", [self formattedStringForSimpleTypeWithFormatter:typeFormatter], currentName];
             break;
     }
     
@@ -497,31 +497,30 @@ static BOOL debugMerge = NO;
     return str;
 }
 
-- (NSString *)formattedStringForSimpleType;
+- (NSString *)formattedStringForSimpleTypeWithFormatter:(CDTypeFormatter *)typeFormatter
 {
     // Ugly but simple:
     switch (_primitiveType) {
         case 'c': return @"char";
         case 'i': return @"int";
         case 's': return @"short";
-        case 'l': return @"long";
-        case 'q': return @"long long";
+        case 'l': return typeFormatter.shouldUseNSIntegerTypedef ? @"NSInteger" : @"long";
+        case 'q': return typeFormatter.shouldUseNSIntegerTypedef ? @"NSInteger" : @"long long";
         case 'C': return @"unsigned char";
         case 'I': return @"unsigned int";
         case 'S': return @"unsigned short";
-        case 'L': return @"unsigned long";
-        case 'Q': return @"unsigned long long";
+        case 'L': return typeFormatter.shouldUseNSUIntegerTypedef ? @"NSUInteger" : @"unsigned long";
+        case 'Q': return typeFormatter.shouldUseNSUIntegerTypedef ? @"NSUInteger" : @"unsigned long long";
         case 'f': return @"float";
         case 'd': return @"double";
         case 'D': return @"long double";
-        case 'B': return @"_Bool"; // C99 _Bool or C++ bool
+        case 'B': return typeFormatter.shouldUseBOOLTypedef ? @"BOOL" : @"_Bool"; // C99 _Bool or C++ bool
         case 'v': return @"void";
         case '*': return @"STR";
         case '#': return @"Class";
         case ':': return @"SEL";
         case '%': return @"NXAtom";
-        case '?': return @"void";
-            //case '?': return @"UNKNOWN"; // For easier regression testing.
+        case '?': return @"void"; //case '?': return @"UNKNOWN"; // For easier regression testing.
         case 'j': return @"_Complex";
         case 'r': return @"const";
         case 'n': return @"in";

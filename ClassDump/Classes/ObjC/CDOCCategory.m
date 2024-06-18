@@ -42,7 +42,7 @@
 
 - (void)recursivelyVisit:(CDVisitor *)visitor;
 {
-    if ([visitor.classDump shouldShowName:self.name]) {
+    if ([visitor.classDump.typeController shouldShowName:self.name]) {
         CDVisitorPropertyState *propertyState = [[CDVisitorPropertyState alloc] initWithProperties:self.properties];
         
         [visitor willVisitCategory:self];

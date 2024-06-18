@@ -19,6 +19,7 @@
 #import <ClassDump/CDProtocolUniquer.h>
 #import <ClassDump/NSArray-CDExtensions.h>
 #import <ClassDump/ClassDumpUtils.h>
+#import <ClassDump/CDClassDumpConfiguration.h>
 
 // Note: sizeof(long long) == 8 on both 32-bit and 64-bit.  sizeof(uint64_t) == 8.  So use [NSNumber numberWithUnsignedLongLong:].
 
@@ -222,9 +223,9 @@
     for (CDOCProtocol *protocol in [self.protocolUniquer uniqueProtocolsSortedByName]) {
         [protocol recursivelyVisit:visitor];
     }
-    if ([[visitor classDump] shouldSortClassesByInheritance]) {
+    if (visitor.classDump.configuration.shouldSortClassesByInheritance) {
         [classesAndCategories sortTopologically];
-    } else if ([[visitor classDump] shouldSortClasses]) {
+    } else if (visitor.classDump.configuration.shouldSortClasses) {
         [classesAndCategories sortUsingSelector:@selector(ascendingCompareByName:)];
     }
     for (id aClassOrCategory in classesAndCategories) {

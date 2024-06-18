@@ -14,6 +14,8 @@
 #import <ClassDump/CDVisitor.h>
 #import <ClassDump/CDVisitorPropertyState.h>
 #import <ClassDump/ClassDumpUtils.h>
+#import <ClassDump/CDClassDumpConfiguration.h>
+
 @interface CDOCProtocol ()
 @property (nonatomic, readonly) NSString *sortableName;
 @end
@@ -189,7 +191,7 @@
 }
 
 - (void)recursivelyVisit:(CDVisitor *)visitor; {
-    if ([visitor.classDump shouldShowName:self.name] && visitor.shouldShowProtocolSection) {
+    if ([visitor.classDump.typeController shouldShowName:self.name] && visitor.shouldShowProtocolSection) {
         CDVisitorPropertyState *propertyState = [[CDVisitorPropertyState alloc] initWithProperties:self.properties];
 
         [visitor willVisitProtocol:self];
@@ -210,12 +212,12 @@
 - (void)visitMethods:(CDVisitor *)visitor propertyState:(CDVisitorPropertyState *)propertyState; {
     NSArray *methods = self.classMethods.array;
 
-    if (visitor.classDump.shouldSortMethods) {
+    if (visitor.classDump.configuration.shouldSortMethods) {
         methods = [methods sortedArrayUsingSelector:@selector(ascendingCompareByName:)];
     }
 
     for (CDOCMethod *method in methods) {
-        if (visitor.classDump.shouldStripSynthesized && [self.classPropertySynthesizedMethodNames containsObject:method.name]) {
+        if (visitor.classDump.configuration.shouldStripSynthesized && [self.classPropertySynthesizedMethodNames containsObject:method.name]) {
             continue;
         }
         
@@ -226,20 +228,20 @@
 
     methods = self.instanceMethods.array;
 
-    if (visitor.classDump.shouldSortMethods) {
+    if (visitor.classDump.configuration.shouldSortMethods) {
         methods = [methods sortedArrayUsingSelector:@selector(ascendingCompareByName:)];
     }
 
     for (CDOCMethod *method in methods) {
-        if (visitor.classDump.shouldStripSynthesized && [self.instancePropertySynthesizedMethodNames containsObject:method.name]) {
+        if (visitor.classDump.configuration.shouldStripSynthesized && [self.instancePropertySynthesizedMethodNames containsObject:method.name]) {
             continue;
         }
         
-        if (visitor.classDump.shouldStripCtor && [method.name isEqualToString:@".cxx_construct"]) {
+        if (visitor.classDump.configuration.shouldStripCtor && [method.name isEqualToString:@".cxx_construct"]) {
             continue;
         }
         
-        if (visitor.classDump.shouldStripDtor && [method.name isEqualToString:@".cxx_destruct"]) {
+        if (visitor.classDump.configuration.shouldStripDtor && [method.name isEqualToString:@".cxx_destruct"]) {
             continue;
         }
         
@@ -253,7 +255,7 @@
 
         methods = self.optionalClassMethods.array;
 
-        if (visitor.classDump.shouldSortMethods) {
+        if (visitor.classDump.configuration.shouldSortMethods) {
             methods = [methods sortedArrayUsingSelector:@selector(ascendingCompareByName:)];
         }
 
@@ -263,7 +265,7 @@
 
         methods = self.optionalInstanceMethods.array;
 
-        if (visitor.classDump.shouldSortMethods) {
+        if (visitor.classDump.configuration.shouldSortMethods) {
             methods = [methods sortedArrayUsingSelector:@selector(ascendingCompareByName:)];
         }
 
@@ -291,7 +293,7 @@
 - (void)visitProperties:(CDVisitor *)visitor; {
     NSArray *array = self.properties;
 
-    if (visitor.classDump.shouldSortMethods) {
+    if (visitor.classDump.configuration.shouldSortMethods) {
         array = [array sortedArrayUsingSelector:@selector(ascendingCompareByName:)];
     }
 

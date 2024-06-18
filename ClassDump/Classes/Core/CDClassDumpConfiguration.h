@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ClassDump/CDOCPropertyAttribute.h>
-
+#import <ClassDump/CDFatArch.h>
 NS_ASSUME_NONNULL_BEGIN
 
 @interface CDClassDumpConfiguration : NSObject
@@ -24,8 +24,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property BOOL shouldStripDtor;
 @property BOOL stopAfterPreProcessor;
 @property BOOL shallow;
+@property BOOL shouldUseBOOLTypedef;
+@property BOOL shouldUseNSIntegerTypedef;
+@property BOOL shouldUseNSUIntegerTypedef;
+@property CDArch targetArch;
+@property (copy, nullable) NSString *sdkRoot;
 @property (copy, nullable) NSRegularExpression *regularExpression;
 @property (copy, nullable) NSArray<CDOCPropertyAttributeType> *sortedPropertyAttributeTypes;
+@property (copy, readonly, nullable) NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights;
+- (BOOL)shouldShowName:(NSString *)name;
+- (void)applyConfiguration:(CDClassDumpConfiguration *)configuration;
 @end
 
 NS_ASSUME_NONNULL_END

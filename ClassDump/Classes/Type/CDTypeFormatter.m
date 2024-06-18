@@ -13,11 +13,8 @@
 #import <ClassDump/NSString-CDExtensions.h>
 #import <ClassDump/NSScanner-CDExtensions.h>
 #import <ClassDump/ClassDumpUtils.h>
-#ifdef DEBUG
-static BOOL debug = YES;
-#else
-static BOOL debug = NO;
-#endif
+#import <ClassDump/CDClassDumpConfiguration.h>
+
 
 @interface CDTypeFormatter ()
 @end
@@ -25,15 +22,6 @@ static BOOL debug = NO;
 #pragma mark -
 
 @implementation CDTypeFormatter
-{
-    __weak CDTypeController *_typeController;
-    
-    NSUInteger _baseLevel;
-    
-    BOOL _shouldExpand; // But just top level struct, level == 0
-    BOOL _shouldAutoExpand;
-    BOOL _shouldShowLexing;
-}
 
 - (instancetype)init;
 {
@@ -42,10 +30,23 @@ static BOOL debug = NO;
         _baseLevel = 0;
         _shouldExpand = NO;
         _shouldAutoExpand = NO;
-        _shouldShowLexing = debug;
     }
 
     return self;
+}
+
+#pragma mark - Getter
+
+- (BOOL)shouldUseBOOLTypedef {
+    return _typeController.configuration.shouldUseBOOLTypedef;
+}
+
+- (BOOL)shouldUseNSIntegerTypedef {
+    return _typeController.configuration.shouldUseNSIntegerTypedef;
+}
+
+- (BOOL)shouldUseNSUIntegerTypedef {
+    return _typeController.configuration.shouldUseNSUIntegerTypedef;
 }
 
 #pragma mark - Debugging

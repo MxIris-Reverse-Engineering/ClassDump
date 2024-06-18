@@ -15,6 +15,7 @@
 #import <ClassDump/CDVisitorPropertyState.h>
 #import <ClassDump/CDOCClassReference.h>
 #import <ClassDump/ClassDumpUtils.h>
+#import <ClassDump/CDClassDumpConfiguration.h>
 
 @implementation CDOCClass {
     
@@ -78,17 +79,17 @@
 
 - (void)recursivelyVisit:(CDVisitor *)visitor;
 {
-    if ([visitor.classDump shouldShowName:self.name]) {
+    if ([visitor.classDump.typeController shouldShowName:self.name]) {
         CDVisitorPropertyState *propertyState = [[CDVisitorPropertyState alloc] initWithProperties:self.properties];
         
         [visitor willVisitClass:self];
-        if (visitor.classDump.shouldStripOverrides) {
+        if (visitor.classDump.configuration.shouldStripOverrides) {
             [self searchOverridePropertiesAndMethods];
         }
         if (self.instanceVariables.count - self.instancePropertySynthesizedIvarNames.count) {
             [visitor willVisitIvarsOfClass:self];
             for (CDOCInstanceVariable *instanceVariable in self.instanceVariables) {
-                if (visitor.classDump.shouldStripSynthesized && [self.instancePropertySynthesizedIvarNames containsObject:instanceVariable.name]) {
+                if (visitor.classDump.configuration.shouldStripSynthesized && [self.instancePropertySynthesizedIvarNames containsObject:instanceVariable.name]) {
                     continue;
                 }
                 [visitor visitIvar:instanceVariable];

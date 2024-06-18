@@ -7,11 +7,13 @@
 
 @protocol CDTypeControllerDelegate;
 
-@class CDClassDump, CDType, CDTypeFormatter;
+@class CDClassDump, CDType, CDTypeFormatter, CDClassDumpConfiguration;
 
 @interface CDTypeController : NSObject
 
-- (instancetype)initWithClassDump:(CDClassDump *)classDump;
+@property (strong, readonly) CDClassDumpConfiguration *configuration;
+
+- (instancetype)initWithConfiguration:(CDClassDumpConfiguration *)configuration;
 
 @property (weak) id <CDTypeControllerDelegate> delegate;
 
@@ -20,12 +22,12 @@
 @property (readonly) CDTypeFormatter *propertyTypeFormatter;
 @property (readonly) CDTypeFormatter *structDeclarationTypeFormatter;
 
-@property (nonatomic, readonly) BOOL shouldShowIvarOffsets;
-@property (nonatomic, readonly) BOOL shouldShowMethodAddresses;
-@property (nonatomic, readonly) BOOL targetArchUses64BitABI;
+@property (readonly) BOOL shouldShowIvarOffsets;
+@property (readonly) BOOL shouldShowMethodAddresses;
+@property (readonly) BOOL targetArchUses64BitABI;
 
-@property (nonatomic, assign) BOOL hasUnknownFunctionPointers;
-@property (nonatomic, assign) BOOL hasUnknownBlocks;
+@property BOOL hasUnknownFunctionPointers;
+@property BOOL hasUnknownBlocks;
 
 - (CDType *)typeFormatter:(CDTypeFormatter *)typeFormatter replacementForType:(CDType *)type;
 - (NSString *)typeFormatter:(CDTypeFormatter *)typeFormatter typedefNameForStructure:(CDType *)structureType level:(NSUInteger)level;

@@ -16,6 +16,7 @@
 #import <ClassDump/CDOCInstanceVariable.h>
 #import <ClassDump/ClassDumpUtils.h>
 #import <ClassDump/CDExtensions.h>
+#import <ClassDump/CDClassDumpConfiguration.h>
 
 @interface CDTextClassDumpVisitor ()
 @end
@@ -264,7 +265,7 @@
 //    if (property.isClass) {
 //        [alist addObject:@"class"];
 //    }
-    NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights = self.classDump.propertyAttributeTypeWeights;
+    NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights = self.classDump.configuration.propertyAttributeTypeWeights;
     NSArray<CDOCPropertyAttribute *> *propertyAttributes = nil;
     if (propertyAttributeTypeWeights) {
         propertyAttributes = [property.detailAttributes sortedArrayUsingComparator:^NSComparisonResult(CDOCPropertyAttribute *attribute1 , CDOCPropertyAttribute *attribute2) {

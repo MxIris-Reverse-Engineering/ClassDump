@@ -20,6 +20,7 @@
 #import <ClassDump/CDClassDumpConfiguration.h>
 #import <ClassDump/NSString-CDExtensions.h>
 #import <ClassDump/ClassDumpUtils.h>
+#import <ClassDump/CDClassDumpConfiguration.h>
 
 NSString *CDErrorDomain_ClassDump = @"CDErrorDomain_ClassDump";
 
@@ -31,45 +32,29 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
 #pragma mark -
 
 @implementation CDClassDump {
-    NSMutableArray *_machOFiles;
-    NSMutableDictionary *_machOFilesByName;
-    NSMutableArray *_objcProcessors;
+    NSMutableArray<CDMachOFile *> *_machOFiles;
+    NSMutableDictionary<NSString *, CDMachOFile *> *_machOFilesByName;
+    NSMutableArray<CDObjectiveCProcessor *> *_objcProcessors;
 }
-
-@synthesize sortedPropertyAttributeTypes = _sortedPropertyAttributeTypes;
 
 - (instancetype)init;
 {
     if ((self = [super init])) {
+        _configuration = [[CDClassDumpConfiguration alloc] init];
         _searchPathState = [[CDSearchPathState alloc] init];
-        _sdkRoot = nil;
+//        _sdkRoot = nil;
         
         _machOFiles = [[NSMutableArray alloc] init];
         _machOFilesByName = [[NSMutableDictionary alloc] init];
         _objcProcessors = [[NSMutableArray alloc] init];
         
-        _typeController = [[CDTypeController alloc] initWithClassDump:self];
+        _typeController = [[CDTypeController alloc] initWithConfiguration:_configuration];
         
         // These can be ppc, ppc7400, ppc64, i386, x86_64
-        _targetArch.cputype = CPU_TYPE_ANY;
-        _targetArch.cpusubtype = 0;
         
-        _shouldShowHeader = NO;
     }
     
     return self;
-}
-
-#pragma mark - Regular expression handling
-
-- (BOOL)shouldShowName:(NSString *)name;
-{
-    if (self.regularExpression != nil) {
-        NSTextCheckingResult *firstMatch = [self.regularExpression firstMatchInString:name options:(NSMatchingOptions)0 range:NSMakeRange(0, [name length])];
-        return firstMatch != nil;
-    }
-    
-    return YES;
 }
 
 #pragma mark -
@@ -108,13 +93,13 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
 {
     CDLogInfo(@"loadFile: %@", file);
     //CDLog(@"targetArch: (%08x, %08x)", targetArch.cputype, targetArch.cpusubtype);
-    CDMachOFile *machOFile = [file machOFileWithArch:_targetArch];
+    CDMachOFile *machOFile = [file machOFileWithArch:_configuration.targetArch];
     //CDLog(@"machOFile: %@", machOFile);
     if (machOFile == nil) {
         if (error != NULL) {
             NSString *failureReason;
-            NSString *targetArchName = CDNameForCPUType(_targetArch.cputype, _targetArch.cpusubtype);
-            if ([file isKindOfClass:[CDFatFile class]] && [(CDFatFile *)file containsArchitecture:_targetArch]) {
+            NSString *targetArchName = CDNameForCPUType(_configuration.targetArch.cputype, _configuration.targetArch.cpusubtype);
+            if ([file isKindOfClass:[CDFatFile class]] && [(CDFatFile *)file containsArchitecture:_configuration.targetArch]) {
                 failureReason = [NSString stringWithFormat:@"Fat file doesn't contain a valid Mach-O file for the specified architecture (%@).  "
                                  "It probably means that class-dump was run on a static library, which is not supported.", targetArchName];
             } else {
@@ -131,7 +116,7 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
     [_machOFiles addObject:machOFile];
     _machOFilesByName[machOFile.filename] = machOFile;
     
-    if ([self shouldProcessRecursively]) {
+    if (_configuration.shouldProcessRecursively) {
         @try {
             for (CDLoadCommand *loadCommand in [machOFile loadCommands]) {
                 if ([loadCommand isKindOfClass:[CDLCDylib class]]) {
@@ -176,8 +161,8 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
     
     for (CDMachOFile *machOFile in self.machOFiles) {
         CDObjectiveCProcessor *processor = [[[machOFile processorClass] alloc] initWithMachOFile:machOFile];
-        processor.shallow = self.shallow;
-        [processor processStoppingEarly:self.stopAfterPreProcessor];
+        processor.shallow = _configuration.shallow;
+        [processor processStoppingEarly:_configuration.stopAfterPreProcessor];
         [_objcProcessors addObject:processor];
     }
 }
@@ -217,8 +202,8 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
             adjustedName = name;
             //CDLog(@"Did not find it.");
         }
-    } else if (self.sdkRoot != nil) {
-        adjustedName = [self.sdkRoot stringByAppendingPathComponent:name];
+    } else if (_configuration.sdkRoot != nil) {
+        adjustedName = [_configuration.sdkRoot stringByAppendingPathComponent:name];
     } else {
         adjustedName = name;
     }
@@ -242,7 +227,7 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
 - (void)appendHeaderToString:(NSMutableString *)resultString;
 {
     // Since this changes each version, for regression testing it'll be better to be able to not show it.
-    if (self.shouldShowHeader == NO)
+    if (_configuration.shouldShowHeader == NO)
         return;
     
     [resultString appendString:@"//\n"];
@@ -251,9 +236,9 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
     [resultString appendString:@"//  Copyright (C) 1997-2019 Steve Nygard. Updated in 2022 by Kevin Bradley.\n"];
     [resultString appendString:@"//\n\n"];
     
-    if (self.sdkRoot != nil) {
+    if (_configuration.sdkRoot != nil) {
         [resultString appendString:@"//\n"];
-        [resultString appendFormat:@"// SDK Root: %@\n", self.sdkRoot];
+        [resultString appendFormat:@"// SDK Root: %@\n", _configuration.sdkRoot];
         [resultString appendString:@"//\n\n"];
     }
 }
@@ -279,35 +264,6 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
 {
     if ([self.machOFiles count] > 0) {
         [[[self.machOFiles lastObject] loadCommandString:YES] print];
-    }
-}
-
-- (void)setSortedPropertyAttributeTypes:(NSArray<CDOCPropertyAttributeType> *)sortedPropertyAttributeTypes {
-    @synchronized (self) {
-        _sortedPropertyAttributeTypes = sortedPropertyAttributeTypes;
-        if (sortedPropertyAttributeTypes) {
-            BOOL containsAllPropertyAttributeTypes = [sortedPropertyAttributeTypes containsObject:CDOCPropertyAttributeTypeClass] &&
-                                                     [sortedPropertyAttributeTypes containsObject:CDOCPropertyAttributeTypeGetter] &&
-                                                     [sortedPropertyAttributeTypes containsObject:CDOCPropertyAttributeTypeSetter] &&
-                                                     [sortedPropertyAttributeTypes containsObject:CDOCPropertyAttributeTypeReadwrite] &&
-                                                     [sortedPropertyAttributeTypes containsObject:CDOCPropertyAttributeTypeReference] &&
-                                                     [sortedPropertyAttributeTypes containsObject:CDOCPropertyAttributeTypeThreadSafe];
-            NSAssert(containsAllPropertyAttributeTypes, @"All attribute types must be included.");
-            NSMutableDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights = [NSMutableDictionary dictionary];
-            propertyAttributeTypeWeights[CDOCPropertyAttributeTypeClass] = @([sortedPropertyAttributeTypes indexOfObject:CDOCPropertyAttributeTypeClass]);
-            propertyAttributeTypeWeights[CDOCPropertyAttributeTypeSetter] = @([sortedPropertyAttributeTypes indexOfObject:CDOCPropertyAttributeTypeSetter]);
-            propertyAttributeTypeWeights[CDOCPropertyAttributeTypeGetter] = @([sortedPropertyAttributeTypes indexOfObject:CDOCPropertyAttributeTypeGetter]);
-            propertyAttributeTypeWeights[CDOCPropertyAttributeTypeReadwrite] = @([sortedPropertyAttributeTypes indexOfObject:CDOCPropertyAttributeTypeReadwrite]);
-            propertyAttributeTypeWeights[CDOCPropertyAttributeTypeReference] = @([sortedPropertyAttributeTypes indexOfObject:CDOCPropertyAttributeTypeReference]);
-            propertyAttributeTypeWeights[CDOCPropertyAttributeTypeThreadSafe] = @([sortedPropertyAttributeTypes indexOfObject:CDOCPropertyAttributeTypeThreadSafe]);
-            _propertyAttributeTypeWeights = propertyAttributeTypeWeights;
-        }
-    }
-}
-
-- (NSArray<CDOCPropertyAttributeType> *)sortedPropertyAttributeTypes {
-    @synchronized (self) {
-        return _sortedPropertyAttributeTypes;
     }
 }
 
@@ -344,7 +300,7 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
             return nil;
         }
         //CDLog(@"No arch specified, best match for local arch is: (%08x, %08x)", targetArch.cputype, targetArch.cpusubtype);
-        classDump.targetArch = targetArch;
+        classDump.configuration.targetArch = targetArch;
         classDump.searchPathState.executablePath = [executablePath stringByDeletingLastPathComponent];
         NSError *error;
         if (![classDump loadFile:file error:&error]) {
@@ -377,22 +333,23 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
             
             return NO;
         }
-        
-        classDump.shouldProcessRecursively = configuration.shouldProcessRecursively;
-        classDump.shouldSortClasses = configuration.shouldSortClasses;
-        classDump.shouldSortClassesByInheritance = configuration.shouldSortClassesByInheritance;
-        classDump.shouldSortMethods = configuration.shouldSortMethods;
-        classDump.shouldShowIvarOffsets = configuration.shouldShowIvarOffsets;
-        classDump.shouldShowMethodAddresses = configuration.shouldShowMethodAddresses;
-        classDump.shouldShowHeader = configuration.shouldShowHeader;
-        classDump.shouldStripOverrides = configuration.shouldStripOverrides;
-        classDump.shouldStripSynthesized = configuration.shouldStripSynthesized;
-        classDump.shouldStripCtor = configuration.shouldStripCtor;
-        classDump.shouldStripDtor = configuration.shouldStripDtor;
-        classDump.stopAfterPreProcessor = configuration.stopAfterPreProcessor;
-        classDump.shallow = configuration.shallow;
-        classDump.regularExpression = configuration.regularExpression;
-        classDump.sortedPropertyAttributeTypes = configuration.sortedPropertyAttributeTypes;
+        [classDump->_configuration applyConfiguration:configuration];
+//        classDump->_configuration = configuration;
+//        classDump.shouldProcessRecursively = configuration.shouldProcessRecursively;
+//        classDump.shouldSortClasses = configuration.shouldSortClasses;
+//        classDump.shouldSortClassesByInheritance = configuration.shouldSortClassesByInheritance;
+//        classDump.shouldSortMethods = configuration.shouldSortMethods;
+//        classDump.shouldShowIvarOffsets = configuration.shouldShowIvarOffsets;
+//        classDump.shouldShowMethodAddresses = configuration.shouldShowMethodAddresses;
+//        classDump.shouldShowHeader = configuration.shouldShowHeader;
+//        classDump.shouldStripOverrides = configuration.shouldStripOverrides;
+//        classDump.shouldStripSynthesized = configuration.shouldStripSynthesized;
+//        classDump.shouldStripCtor = configuration.shouldStripCtor;
+//        classDump.shouldStripDtor = configuration.shouldStripDtor;
+//        classDump.stopAfterPreProcessor = configuration.stopAfterPreProcessor;
+//        classDump.shallow = configuration.shallow;
+//        classDump.regularExpression = configuration.regularExpression;
+//        classDump.sortedPropertyAttributeTypes = configuration.sortedPropertyAttributeTypes;
         
         [classDump processObjectiveCData];
         [classDump registerTypes];

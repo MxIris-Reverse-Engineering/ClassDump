@@ -11,14 +11,16 @@
 
 @property (weak) CDTypeController *typeController;
 
-@property (assign) NSUInteger baseLevel;
-@property (assign) BOOL shouldExpand;
-@property (assign) BOOL shouldAutoExpand;
-@property (assign) BOOL shouldShowLexing;
+@property NSUInteger baseLevel;
+@property BOOL shouldExpand;
+@property BOOL shouldAutoExpand;
+@property BOOL shouldShowLexing;
+@property (readonly) BOOL shouldUseBOOLTypedef;
+@property (readonly) BOOL shouldUseNSIntegerTypedef;
+@property (readonly) BOOL shouldUseNSUIntegerTypedef;
 
 - (NSString *)formatVariable:(NSString *)name type:(CDType *)type;
 - (NSString *)formatMethodName:(NSString *)name typeString:(NSString *)typeString;
-
 - (NSString *)typedefNameForStructure:(CDType *)structureType level:(NSUInteger)level;
 
 - (void)formattingDidReferenceClassName:(NSString *)name;

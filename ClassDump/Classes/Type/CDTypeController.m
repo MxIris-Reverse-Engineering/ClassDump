@@ -10,14 +10,10 @@
 #import <ClassDump/CDTypeFormatter.h>
 #import <ClassDump/CDType.h>
 #import <ClassDump/ClassDumpUtils.h>
-#ifdef DEBUG
-static BOOL debug = YES;
-#else
-static BOOL debug = NO;
-#endif
+#import <ClassDump/CDClassDumpConfiguration.h>
+
 
 @interface CDTypeController ()
-@property (readonly, weak) CDClassDump *classDump; // passed during formatting, to get at options.
 @property (readonly) CDStructureTable *structureTable;
 @property (readonly) CDStructureTable *unionTable;
 @end
@@ -35,10 +31,10 @@ static BOOL debug = NO;
     CDStructureTable *_unionTable;
 }
 
-- (instancetype)initWithClassDump:(CDClassDump *)classDump;
+- (instancetype)initWithConfiguration:(CDClassDumpConfiguration *)configuration
 {
     if ((self = [super init])) {
-        _classDump = classDump;
+        _configuration = configuration;
         
         _ivarTypeFormatter = [[CDTypeFormatter alloc] init];
         _ivarTypeFormatter.shouldExpand = NO;
@@ -93,17 +89,17 @@ static BOOL debug = NO;
 
 - (BOOL)shouldShowIvarOffsets;
 {
-    return self.classDump.shouldShowIvarOffsets;
+    return _configuration.shouldShowIvarOffsets;
 }
 
 - (BOOL)shouldShowMethodAddresses;
 {
-    return self.classDump.shouldShowMethodAddresses;
+    return _configuration.shouldShowMethodAddresses;
 }
 
 - (BOOL)targetArchUses64BitABI;
 {
-    return CDArchUses64BitABI(self.classDump.targetArch);
+    return CDArchUses64BitABI(_configuration.targetArch);
 }
 
 #pragma mark -
@@ -191,18 +187,18 @@ static BOOL debug = NO;
     [self generateTypedefNames];
     [self generateMemberNames];
     
-    if (debug) {
-        NSMutableString *str = [NSMutableString string];
-        [self.structureTable appendNamedStructuresToString:str formatter:self.structDeclarationTypeFormatter markName:@"Named Structures"];
-        [self.unionTable     appendNamedStructuresToString:str formatter:self.structDeclarationTypeFormatter markName:@"Named Unions"];
-        [str writeToFile:@"/tmp/out.struct" atomically:NO encoding:NSUTF8StringEncoding error:NULL];
-        
-        str = [NSMutableString string];
-        [self.structureTable appendTypedefsToString:str formatter:self.structDeclarationTypeFormatter markName:@"Typedef'd Structures"];
-        [self.unionTable     appendTypedefsToString:str formatter:self.structDeclarationTypeFormatter markName:@"Typedef'd Unions"];
-        [str writeToFile:@"/tmp/out.typedef" atomically:NO encoding:NSUTF8StringEncoding error:NULL];
-        //CDLog(@"str =\n%@", str);
-    }
+//    if (debug) {
+//        NSMutableString *str = [NSMutableString string];
+//        [self.structureTable appendNamedStructuresToString:str formatter:self.structDeclarationTypeFormatter markName:@"Named Structures"];
+//        [self.unionTable     appendNamedStructuresToString:str formatter:self.structDeclarationTypeFormatter markName:@"Named Unions"];
+//        [str writeToFile:@"/tmp/out.struct" atomically:NO encoding:NSUTF8StringEncoding error:NULL];
+//        
+//        str = [NSMutableString string];
+//        [self.structureTable appendTypedefsToString:str formatter:self.structDeclarationTypeFormatter markName:@"Typedef'd Structures"];
+//        [self.unionTable     appendTypedefsToString:str formatter:self.structDeclarationTypeFormatter markName:@"Typedef'd Unions"];
+//        [str writeToFile:@"/tmp/out.typedef" atomically:NO encoding:NSUTF8StringEncoding error:NULL];
+//        //CDLog(@"str =\n%@", str);
+//    }
 }
 
 #pragma mark - Phase 0
@@ -261,7 +257,7 @@ static BOOL debug = NO;
     if (maxDepth < self.unionTable.phase1_maxDepth)
         maxDepth = self.unionTable.phase1_maxDepth;
     
-    if (debug) CDLog(@"max structure/union depth is: %lu", maxDepth);
+//    if (debug) CDLog(@"max structure/union depth is: %lu", maxDepth);
     
     for (NSUInteger depth = 1; depth <= maxDepth; depth++) {
         [self.structureTable runPhase2AtDepth:depth];
@@ -339,7 +335,7 @@ static BOOL debug = NO;
 
 - (BOOL)shouldShowName:(NSString *)name;
 {
-    return [self.classDump shouldShowName:name];
+    return [_configuration shouldShowName:name];
 }
 
 - (BOOL)shouldExpandType:(CDType *)type;
