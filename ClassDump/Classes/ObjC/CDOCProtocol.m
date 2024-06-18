@@ -63,7 +63,7 @@
 
 // This assumes that the protocol name doesn't change after it's been added to this.
 - (void)addProtocol:(CDOCProtocol *)protocol; {
-    CDLogInfo_CMD;
+    
 
     if ([_adoptedProtocolNames containsObject:protocol.name] == NO) {
         [_protocols addObject:protocol];

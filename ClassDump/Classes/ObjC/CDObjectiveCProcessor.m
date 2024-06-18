@@ -135,7 +135,7 @@
 #pragma mark - Processing
 
 - (void)processStoppingEarly:(BOOL)stopEarly {
-    CDLogInfo_CMD;
+    
     if (self.machOFile.isEncrypted == NO && self.machOFile.canDecryptAllSegments) {
         [self.machOFile.symbolTable loadSymbols];
         //CDLogVerbose(@"SymbolTable: %@", self.machOFile.symbolTable);
@@ -158,7 +158,7 @@
 
 - (void)process
 {
-    CDLogInfo_CMD;
+    
     /*
     if (self.machOFile.isEncrypted == NO && self.machOFile.canDecryptAllSegments) {
         [self.machOFile.symbolTable loadSymbols];

@@ -26,6 +26,8 @@
 		E9C4D00E2C1F0FB800E5B83A /* CDTestObjectC.h in Headers */ = {isa = PBXBuildFile; fileRef = E9C4D00B2C1F0FB800E5B83A /* CDTestObjectC.h */; };
 		E9C4D0112C1F3A0000E5B83A /* NSArray+Functional.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C4D00F2C1F3A0000E5B83A /* NSArray+Functional.m */; };
 		E9C4D0122C1F3A0000E5B83A /* NSArray+Functional.h in Headers */ = {isa = PBXBuildFile; fileRef = E9C4D0102C1F3A0000E5B83A /* NSArray+Functional.h */; };
+		E9D669DB2C214027007478E1 /* CDClassDumpConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D669DA2C214027007478E1 /* CDClassDumpConfiguration.m */; };
+		E9D669DC2C214027007478E1 /* CDClassDumpConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D669D92C214027007478E1 /* CDClassDumpConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9E8BFEF2B55986600CF702A /* ClassDump.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E8BFEE2B55986600CF702A /* ClassDump.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9E8C2012B559EC400CF702A /* CDLCDataInCode.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E8C1512B559EC400CF702A /* CDLCDataInCode.m */; };
 		E9E8C2022B559EC400CF702A /* CDLCBuildVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E8C1522B559EC400CF702A /* CDLCBuildVersion.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -219,6 +221,8 @@
 		E9C4D00C2C1F0FB800E5B83A /* CDTestObjectC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CDTestObjectC.m; sourceTree = "<group>"; };
 		E9C4D00F2C1F3A0000E5B83A /* NSArray+Functional.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Functional.m"; sourceTree = "<group>"; };
 		E9C4D0102C1F3A0000E5B83A /* NSArray+Functional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+Functional.h"; sourceTree = "<group>"; };
+		E9D669D92C214027007478E1 /* CDClassDumpConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDClassDumpConfiguration.h; sourceTree = "<group>"; };
+		E9D669DA2C214027007478E1 /* CDClassDumpConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CDClassDumpConfiguration.m; sourceTree = "<group>"; };
 		E9E8BFEB2B55986600CF702A /* ClassDump.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ClassDump.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9E8BFEE2B55986600CF702A /* ClassDump.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ClassDump.h; sourceTree = "<group>"; };
 		E9E8C1512B559EC400CF702A /* CDLCDataInCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDLCDataInCode.m; sourceTree = "<group>"; };
@@ -630,6 +634,8 @@
 			children = (
 				E9E8C19D2B559EC400CF702A /* CDClassDump.h */,
 				E9E8C19E2B559EC400CF702A /* CDClassDump.m */,
+				E9D669D92C214027007478E1 /* CDClassDumpConfiguration.h */,
+				E9D669DA2C214027007478E1 /* CDClassDumpConfiguration.m */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -808,6 +814,7 @@
 				E9E8C2722B559EC400CF702A /* NSError-CDExtensions.h in Headers */,
 				E9E8C23C2B559EC400CF702A /* CDLCTwoLevelHints.h in Headers */,
 				E9E8C21F2B559EC400CF702A /* CDLCRoutines32.h in Headers */,
+				E9D669DC2C214027007478E1 /* CDClassDumpConfiguration.h in Headers */,
 				E9E8C25B2B559EC400CF702A /* CDOCProperty.h in Headers */,
 				E9E8C2912B559EC400CF702A /* CDSection.h in Headers */,
 				E9E8C2232B559EC400CF702A /* CDLCSymbolTable.h in Headers */,
@@ -916,6 +923,7 @@
 					};
 					E9E8BFEA2B55986600CF702A = {
 						CreatedOnToolsVersion = 15.2;
+						LastSwiftMigration = 1540;
 					};
 				};
 			};
@@ -1028,6 +1036,7 @@
 				E9E8C2642B559EC400CF702A /* CDOCClassReference.m in Sources */,
 				E9E8C20F2B559EC400CF702A /* CDLCPrebindChecksum.m in Sources */,
 				E9E8C2832B559EC400CF702A /* CDTypeController.m in Sources */,
+				E9D669DB2C214027007478E1 /* CDClassDumpConfiguration.m in Sources */,
 				E9E8C2992B559EC400CF702A /* CDStructureInfo.m in Sources */,
 				E9E8C2942B559EC400CF702A /* CDBalanceFormatter.m in Sources */,
 				E9E8C2252B559EC400CF702A /* CDLCBuildVersion.m in Sources */,
@@ -1347,6 +1356,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -1387,6 +1397,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1396,6 +1407,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;

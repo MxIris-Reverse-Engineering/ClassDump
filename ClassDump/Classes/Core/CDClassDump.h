@@ -28,6 +28,7 @@
 @class CDTypeController;
 @class CDVisitor;
 @class CDSearchPathState;
+@class CDClassDumpConfiguration;
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
@@ -47,12 +48,10 @@ extern NSString *CDErrorKey_Exception;
 @property BOOL shouldStripSynthesized;
 @property BOOL shouldStripCtor;
 @property BOOL shouldStripDtor;
-@property BOOL verbose;
 @property BOOL stopAfterPreProcessor;
 @property BOOL shallow;
-@property BOOL dumpEntitlements;
-@property (nonatomic, strong, readonly, nullable) NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights;
-@property (nonatomic, strong, nullable) NSArray<CDOCPropertyAttributeType> *sortedPropertyAttributeTypes;
+@property (strong, readonly, nullable) NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights;
+@property (strong, nullable) NSArray<CDOCPropertyAttributeType> *sortedPropertyAttributeTypes;
 @property CDArch targetArch;
 @property (strong, nullable) NSRegularExpression *regularExpression;
 @property (strong, nullable) NSString *sdkRoot;
@@ -79,9 +78,8 @@ extern NSString *CDErrorKey_Exception;
 - (void)showLoadCommands;
 
 + (BOOL)printFixupData;
-+ (BOOL)performClassDumpOnFile:(NSString *)file withEntitlements:(BOOL)dumpEnt toFolder:(NSString *)outputPath error:(NSError **)error;
-+ (BOOL)performClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath error:(NSError **)error;
-+ (nullable CDClassDump *)classDumpInstanceFromFile:(NSString *)file;
++ (BOOL)performClassDumpOnFile:(NSString *)file toFolder:(NSString *)outputPath configuration:(CDClassDumpConfiguration *)configuration error:(NSError **)error;
++ (nullable CDClassDump *)classDumpContentsOfFile:(NSString *)file;
 + (NSDictionary *)getFileEntitlements:(NSString *)file;
 
 @end

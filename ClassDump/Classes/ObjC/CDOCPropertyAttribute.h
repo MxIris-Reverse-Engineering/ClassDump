@@ -18,7 +18,6 @@ extern CDOCPropertyAttributeType const CDOCPropertyAttributeTypeReadwrite; /// @
 extern CDOCPropertyAttributeType const CDOCPropertyAttributeTypeGetter; /// @c getter
 extern CDOCPropertyAttributeType const CDOCPropertyAttributeTypeSetter; /// @c setter
 extern CDOCPropertyAttributeType const CDOCPropertyAttributeTypeClass; /// @c class
-//extern CDOCPropertyAttributeType const CDOCPropertyAttributeTypeNullability; /// @c nullable / @c nonnull
 
 @interface CDOCPropertyAttribute : NSObject
 /// The name of a property attribute, e.g. @c strong, @c nonatomic, @c getter

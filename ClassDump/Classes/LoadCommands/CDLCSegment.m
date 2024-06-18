@@ -225,7 +225,7 @@ NSString *CDSegmentEncryptionTypeName(CDSegmentEncryptionType type)
 
 - (NSUInteger)fileOffsetForAddress:(NSUInteger)address;
 {
-    CDLogVerbose_CMD;
+    
     CDSection *section = [self sectionContainingAddress:address];
     CDLogVerbose(@"section: %@ address: 0x%08lx", section, address);
     return [section fileOffsetForAddress:address];

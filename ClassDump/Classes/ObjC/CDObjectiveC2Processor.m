@@ -112,7 +112,7 @@ struct cd_objc2_category {
 }
 
 - (void)loadProtocols; {
-    CDLogInfo_CMD;
+    
     CDSection *section = [[self.machOFile dataConstSegment] sectionWithName:@"__objc_protolist"];
     CDLogVerbose(@"\nProtocols section: %@", section);
     CDMachOFileDataCursor *cursor = [[CDMachOFileDataCursor alloc] initWithSection:section];
@@ -121,7 +121,7 @@ struct cd_objc2_category {
 }
 
 - (void)loadClasses; {
-    CDLogInfo_CMD;
+    
     CDLCSegment *segment = [self.machOFile dataConstSegment];
     CDSection *section = [segment sectionWithName:@"__objc_classlist"];
     CDLogVerbose(@"\nClasses section: %@", section);
@@ -154,7 +154,7 @@ struct cd_objc2_category {
 }
 
 - (void)loadCategories; {
-    CDLogInfo_CMD;
+    
     CDSection *section = [[self.machOFile dataConstSegment] sectionWithName:@"__objc_catlist"];
     CDLogVerbose(@"\nCategories section: %@", section);
     CDMachOFileDataCursor *cursor = [[CDMachOFileDataCursor alloc] initWithSection:section];
@@ -472,7 +472,7 @@ struct cd_objc2_category {
 }
 
 - (NSArray<CDOCProperty *> *)loadPropertiesAtAddress:(uint64_t)address isClass:(BOOL)isClass {
-    CDLogInfo_CMD;
+    
     NSMutableArray<CDOCProperty *> *properties = [NSMutableArray array];
     if (address != 0) {
         struct cd_objc2_list_header listHeader;

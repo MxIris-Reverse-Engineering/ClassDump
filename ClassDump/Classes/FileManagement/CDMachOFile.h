@@ -21,13 +21,13 @@ typedef enum : NSUInteger {
 @property (readonly) CDByteOrder byteOrder;
 
 @property (readonly) uint32_t magic;
-@property (assign) cpu_type_t cputype;
-@property (assign) cpu_subtype_t cpusubtype;
+@property (readonly) cpu_type_t cputype;
+@property (readonly) cpu_subtype_t cpusubtype;
 @property (readonly) uint32_t filetype;
 @property (readonly) uint32_t flags;
 
-@property (nonatomic, readonly) cpu_type_t maskedCPUType;
-@property (nonatomic, readonly) cpu_subtype_t maskedCPUSubtype;
+@property (readonly) cpu_type_t maskedCPUType;
+@property (readonly) cpu_subtype_t maskedCPUSubtype;
 
 @property (readonly) NSArray<__kindof CDLoadCommand *> *loadCommands;
 @property (readonly) NSArray<__kindof CDLoadCommand *> *dylibLoadCommands;
@@ -37,18 +37,19 @@ typedef enum : NSUInteger {
 @property (readonly) NSArray<__kindof CDLoadCommand *> *dyldEnvironment;
 @property (readonly) NSArray<__kindof CDLoadCommand *> *reExportedDylibs;
 
-@property (strong) CDLCSymbolTable *symbolTable;
-@property (strong) CDLCDynamicSymbolTable *dynamicSymbolTable;
-@property (strong) CDLCDyldInfo *dyldInfo;
-@property (strong) CDLCExportTRIEData *exportsTrie;
-@property (strong) CDLCChainedFixups *chainedFixups;
-@property (strong) CDLCDylib *dylibIdentifier;
-@property (strong) CDLCVersionMinimum *minVersionMacOSX;
-@property (strong) CDLCVersionMinimum *minVersionIOS;
-@property (strong) CDLCSourceVersion *sourceVersion;
-@property (strong) CDLCBuildVersion *buildVersion;
+@property (strong, readonly) CDLCSymbolTable *symbolTable;
+@property (strong, readonly) CDLCDynamicSymbolTable *dynamicSymbolTable;
+@property (strong, readonly) CDLCDyldInfo *dyldInfo;
+@property (strong, readonly) CDLCExportTRIEData *exportsTrie;
+@property (strong, readonly) CDLCChainedFixups *chainedFixups;
+@property (strong, readonly) CDLCDylib *dylibIdentifier;
+@property (strong, readonly) CDLCVersionMinimum *minVersionMacOSX;
+@property (strong, readonly) CDLCVersionMinimum *minVersionIOS;
+@property (strong, readonly) CDLCSourceVersion *sourceVersion;
+@property (strong, readonly) CDLCBuildVersion *buildVersion;
 
 @property (readonly) BOOL uses64BitABI;
+
 - (NSUInteger)ptrSize;
 
 - (NSString *)filetypeDescription;
@@ -64,17 +65,17 @@ typedef enum : NSUInteger {
 - (const void *)bytes;
 - (const void *)bytesAtOffset:(NSUInteger)offset;
 
-@property (nonatomic, readonly) NSString *importBaseName;
+@property (readonly) NSString *importBaseName;
 
-@property (nonatomic, readonly) BOOL isEncrypted;
-@property (nonatomic, readonly) BOOL hasProtectedSegments;
-@property (nonatomic, readonly) BOOL canDecryptAllSegments;
+@property (readonly) BOOL isEncrypted;
+@property (readonly) BOOL hasProtectedSegments;
+@property (readonly) BOOL canDecryptAllSegments;
 
 - (NSString *)loadCommandString:(BOOL)isVerbose;
 - (NSString *)headerString:(BOOL)isVerbose;
 
-@property (nonatomic, readonly) NSUUID *UUID;
-@property (nonatomic, readonly) NSString *archName;
+@property (readonly) NSUUID *UUID;
+@property (readonly) NSString *archName;
 
 - (Class)processorClass;
 - (void)logInfoForAddress:(NSUInteger)address;
@@ -88,9 +89,9 @@ typedef enum : NSUInteger {
 
 - (CDLCDylib *)dylibLoadCommandForLibraryOrdinal:(NSUInteger)ordinal;
 
-@property (nonatomic, readonly) BOOL hasObjectiveC1Data;
-@property (nonatomic, readonly) BOOL hasObjectiveC2Data;
-@property (nonatomic, readonly) Class processorClass;
+@property (readonly) BOOL hasObjectiveC1Data;
+@property (readonly) BOOL hasObjectiveC2Data;
+@property (readonly) Class processorClass;
 
 - (NSString *)entitlements;
 - (NSDictionary *)entitlementsDictionary;
