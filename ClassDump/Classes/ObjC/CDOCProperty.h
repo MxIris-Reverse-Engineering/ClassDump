@@ -8,8 +8,6 @@
 @class CDType;
 @class CDOCPropertyAttribute;
 
-
-
 @interface CDOCProperty : NSObject
 
 - (instancetype)initWithName:(NSString *)name attributes:(NSString *)attributes isClass:(BOOL)isClass;

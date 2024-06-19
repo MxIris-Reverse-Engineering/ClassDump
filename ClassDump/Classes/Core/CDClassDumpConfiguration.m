@@ -77,6 +77,7 @@
     self.shouldUseBOOLTypedef = configuration.shouldUseBOOLTypedef;
     self.shouldUseNSIntegerTypedef = configuration.shouldUseNSIntegerTypedef;
     self.shouldUseNSUIntegerTypedef = configuration.shouldUseNSUIntegerTypedef;
+    self.shouldUseStrongPropertyAttribute = configuration.shouldUseStrongPropertyAttribute;
     self.targetArch = configuration.targetArch;
     self.sdkRoot = configuration.sdkRoot;
     self.regularExpression = configuration.regularExpression;

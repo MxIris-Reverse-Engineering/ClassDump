@@ -10,8 +10,6 @@
 
 @implementation NSArray (Functional)
 
-
-
 - (NSArray *)map:(id (^)(id obj))block {
     NSMutableArray *result = [NSMutableArray arrayWithCapacity:[self count]];
     for (id obj in self) {

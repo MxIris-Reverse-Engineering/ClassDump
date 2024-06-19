@@ -241,7 +241,7 @@
                 attributeType = CDOCPropertyAttributeTypeReference;
                 break;
             case '&':
-                attributeName = @"retain";
+                attributeName = @"strong";
                 attributeType = CDOCPropertyAttributeTypeReference;
                 break;
             case 'D':

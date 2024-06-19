@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property BOOL shouldUseBOOLTypedef;
 @property BOOL shouldUseNSIntegerTypedef;
 @property BOOL shouldUseNSUIntegerTypedef;
+@property BOOL shouldUseStrongPropertyAttribute; /// replace @c retain to @c strong
 @property CDArch targetArch;
 @property (copy, nullable) NSString *sdkRoot;
 @property (copy, nullable) NSRegularExpression *regularExpression;

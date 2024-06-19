@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSArray<ObjectType> (Functional)
 
-
-
 - (NSArray *)map:(id (^)(ObjectType obj))block;
 - (NSArray *)flatMap:(NSArray * (^)(ObjectType obj))block;
 - (NSArray *)compactMap:(id _Nullable(^)(ObjectType obj))block;
