@@ -82,6 +82,7 @@
     self.sdkRoot = configuration.sdkRoot;
     self.regularExpression = configuration.regularExpression;
     self.sortedPropertyAttributeTypes = configuration.sortedPropertyAttributeTypes;
+    self.shouldGenerateEmptyImplementationFile = configuration.shouldGenerateEmptyImplementationFile;
     self.preferredStructureFilename = configuration.preferredStructureFilename;
     self.protocolFilenameFormatter = configuration.protocolFilenameFormatter;
     self.categoryFilenameFormatter = configuration.categoryFilenameFormatter;
