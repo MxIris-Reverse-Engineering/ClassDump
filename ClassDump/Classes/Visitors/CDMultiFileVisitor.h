@@ -28,6 +28,8 @@
 
 @property NSString *preferredStructureFileName;
 
+@property BOOL shouldGenerateEmptyImplementationFile;
+
 @property (weak) id<CDProtocolFileNameFormatter> protocolFileNameFormatter;
 
 @property (weak) id<CDCategoryFileNameFormatter> categoryFileNameFormatter;
