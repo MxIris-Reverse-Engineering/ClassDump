@@ -11,7 +11,7 @@
 
 @property (weak, readonly) CDMachOFile *machOFile;
 @property (readonly) BOOL hasObjectiveCData;
-@property (assign) BOOL shallow;
+//@property (assign) BOOL shallow;
 
 @property (readonly) CDSection *objcImageInfoSection;
 @property (readonly) NSString *garbageCollectionStatus;

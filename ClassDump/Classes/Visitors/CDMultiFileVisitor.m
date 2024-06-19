@@ -12,6 +12,7 @@
 #import <ClassDump/CDOCProtocol.h>
 #import <ClassDump/CDTypeController.h>
 #import <ClassDump/ClassDumpUtils.h>
+#import <ClassDump/CDClassDumpConfiguration.h>
 
 @interface CDMultiFileVisitor ()
 
@@ -120,7 +121,7 @@
 
     [[self.resultString dataUsingEncoding:NSUTF8StringEncoding] writeToFile:filename atomically:YES];
     
-    if (self.shouldGenerateEmptyImplementationFile) {
+    if (self.classDump.configuration.shouldGenerateEmptyImplementationFile) {
         [self.implementationString setString:@""];
         [self.implementationString appendFormat:@"#import \"%@.h\"", aClass.name];
         [self.implementationString appendString:@"\n"];
@@ -169,8 +170,8 @@
 
     NSString *filename = nil;
 
-    if (self.categoryFileNameFormatter && [self.categoryFileNameFormatter respondsToSelector:@selector(stringForClassName:categoryName:)]) {
-        filename = [self.categoryFileNameFormatter stringForClassName:category.className categoryName:category.name];
+    if (self.classDump.configuration.categoryFilenameFormatter && [self.classDump.configuration.categoryFilenameFormatter respondsToSelector:@selector(stringForClassName:categoryName:)]) {
+        filename = [self.classDump.configuration.categoryFilenameFormatter stringForClassName:category.className categoryName:category.name];
     }
 
     if (!filename) {
@@ -183,7 +184,7 @@
 
     [[self.resultString dataUsingEncoding:NSUTF8StringEncoding] writeToFile:filename atomically:YES];
     
-    if (self.shouldGenerateEmptyImplementationFile) {
+    if (self.classDump.configuration.shouldGenerateEmptyImplementationFile) {
         [self.implementationString setString:@""];
         [self.implementationString appendFormat:@"#import \"%@\"", filename.lastPathComponent];
         [self.implementationString appendString:@"\n"];
@@ -224,8 +225,8 @@
 
     NSString *filename = nil;
 
-    if (self.protocolFileNameFormatter && [self.protocolFileNameFormatter respondsToSelector:@selector(stringForProtocolName:)]) {
-        filename = [self.protocolFileNameFormatter stringForProtocolName:protocol.name];
+    if (self.classDump.configuration.protocolFilenameFormatter && [self.classDump.configuration.protocolFilenameFormatter respondsToSelector:@selector(stringForProtocolName:)]) {
+        filename = [self.classDump.configuration.protocolFilenameFormatter stringForProtocolName:protocol.name];
     }
 
     if (!filename) {
@@ -431,8 +432,8 @@
 
     NSString *filename = nil;
 
-    if (self.preferredStructureFileName) {
-        filename = self.preferredStructureFileName;
+    if (self.classDump.configuration.preferredStructureFilename) {
+        filename = self.classDump.configuration.preferredStructureFilename;
     } else {
         filename = @"CDStructures.h";
     }

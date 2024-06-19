@@ -161,8 +161,8 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
     
     for (CDMachOFile *machOFile in self.machOFiles) {
         CDObjectiveCProcessor *processor = [[[machOFile processorClass] alloc] initWithMachOFile:machOFile];
-        processor.shallow = _configuration.shallow;
-        [processor processStoppingEarly:_configuration.stopAfterPreProcessor];
+//        processor.shallow = _configuration.shallow;
+        [processor processStoppingEarly:NO];
         [_objcProcessors addObject:processor];
     }
 }
