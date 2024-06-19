@@ -21,7 +21,7 @@ struct CDTestStructA {
 @property (nonatomic, class, strong, readonly) id objectClassProperty;
 @property (nonatomic, class, readonly) BOOL valueClassProperty;
 @property (nonatomic, class, readonly) struct CDTestStructA structClassProperty;
-
+@property (nonatomic, copy) NSString *(^blockValue)(BOOL, NSInteger);
 + (void)voidClassMethod;
 - (void)voidInstanceMethod;
 

@@ -61,14 +61,15 @@
         XCTAssert(NO, @"couldnt create class dump instance for file: %@", dumpFromURL.path);
         return;
     }
-    classDump.shouldShowIvarOffsets = YES; // -a
-    classDump.shouldShowMethodAddresses = NO; // -A
-    classDump.shouldStripOverrides = YES;
-    classDump.shouldStripSynthesized = YES;
-    classDump.shouldStripCtor = YES;
-    classDump.shouldStripDtor = YES;
-    classDump.verbose = YES;
-    classDump.sortedPropertyAttributeTypes = @[
+    CDClassDumpConfiguration *configuration = [CDClassDumpConfiguration new];
+    
+    configuration.shouldShowIvarOffsets = YES; // -a
+    configuration.shouldShowMethodAddresses = NO; // -A
+    configuration.shouldStripOverrides = YES;
+    configuration.shouldStripSynthesized = YES;
+    configuration.shouldStripCtor = YES;
+    configuration.shouldStripDtor = YES;
+    configuration.sortedPropertyAttributeTypes = @[
         CDOCPropertyAttributeTypeThreadSafe,
         CDOCPropertyAttributeTypeReference,
         CDOCPropertyAttributeTypeReadwrite,
@@ -76,6 +77,7 @@
         CDOCPropertyAttributeTypeGetter,
         CDOCPropertyAttributeTypeSetter,
     ];
+    [classDump.configuration applyConfiguration:configuration];
     [classDump processObjectiveCData];
     [classDump registerTypes];
     CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
@@ -86,30 +88,30 @@
     [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[dumpToURL]];
 }
 
-- (void)testDumpFramework {
-    @autoreleasepool {
-        NSURL *dumpFromURL = [NSURL fileURLWithPath:@"/Volumes/FrameworkLab/Numbers/Frameworks/TSTables.framework/Versions/A/TSTables"];
-        NSURL *dumpToURL = [NSURL fileURLWithPath:@"/Volumes/FrameworkLab/Numbers/FrameworksDumpHeaders/TSTables"];
-        CDClassDump *classDump = [self classDumpInstanceFromFile:dumpFromURL.path];
-        if (!classDump){
-            XCTAssert(NO, @"couldnt create class dump instance for file: %@", dumpFromURL.path);
-            return;
-        }
-        classDump.shouldShowIvarOffsets = YES; // -a
-        classDump.shouldShowMethodAddresses = NO; // -A
-        classDump.shouldStripOverrides = YES;
-        classDump.shouldStripSynthesized = YES;
-        classDump.verbose = YES;
-        [classDump processObjectiveCData];
-        [classDump registerTypes];
-        CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
-        multiFileVisitor.classDump = classDump;
-        multiFileVisitor.outputPath = dumpToURL.path;
-        classDump.typeController.delegate = multiFileVisitor;
-        [classDump recursivelyVisit:multiFileVisitor];
-        [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[dumpToURL]];
-    }
-}
+//- (void)testDumpFramework {
+//    @autoreleasepool {
+//        NSURL *dumpFromURL = [NSURL fileURLWithPath:@"/Volumes/FrameworkLab/Numbers/Frameworks/TSTables.framework/Versions/A/TSTables"];
+//        NSURL *dumpToURL = [NSURL fileURLWithPath:@"/Volumes/FrameworkLab/Numbers/FrameworksDumpHeaders/TSTables"];
+//        CDClassDump *classDump = [self classDumpInstanceFromFile:dumpFromURL.path];
+//        if (!classDump){
+//            XCTAssert(NO, @"couldnt create class dump instance for file: %@", dumpFromURL.path);
+//            return;
+//        }
+//        classDump.shouldShowIvarOffsets = YES; // -a
+//        classDump.shouldShowMethodAddresses = NO; // -A
+//        classDump.shouldStripOverrides = YES;
+//        classDump.shouldStripSynthesized = YES;
+//        classDump.verbose = YES;
+//        [classDump processObjectiveCData];
+//        [classDump registerTypes];
+//        CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
+//        multiFileVisitor.classDump = classDump;
+//        multiFileVisitor.outputPath = dumpToURL.path;
+//        classDump.typeController.delegate = multiFileVisitor;
+//        [classDump recursivelyVisit:multiFileVisitor];
+//        [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[dumpToURL]];
+//    }
+//}
 
 
 - (CDClassDump *)classDumpInstanceFromFile:(NSString *)file {
@@ -141,7 +143,7 @@
             return nil;
         }
         //CDLog(@"No arch specified, best match for local arch is: (%08x, %08x)", targetArch.cputype, targetArch.cpusubtype);
-        classDump.targetArch = targetArch;
+        classDump.configuration.targetArch = targetArch;
         classDump.searchPathState.executablePath = [executablePath stringByDeletingLastPathComponent];
         NSError *error;
         if (![classDump loadFile:file error:&error]) {

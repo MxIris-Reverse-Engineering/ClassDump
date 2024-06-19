@@ -333,7 +333,9 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
             
             return NO;
         }
+        CDArch targetArch = classDump.configuration.targetArch;
         [classDump->_configuration applyConfiguration:configuration];
+        classDump.configuration.targetArch = targetArch;
 //        classDump->_configuration = configuration;
 //        classDump.shouldProcessRecursively = configuration.shouldProcessRecursively;
 //        classDump.shouldSortClasses = configuration.shouldSortClasses;

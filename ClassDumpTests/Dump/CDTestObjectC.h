@@ -2,7 +2,7 @@
 
 @interface CDTestObjectC : CDTestObjectB
 
-@property (nonatomic, retain) id dateValue;
+@property (nonatomic, strong) id dateValue;
 
 - (id)description;
 
