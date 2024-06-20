@@ -116,12 +116,16 @@
                 if ([_classPropertyIgnoreNames containsObject:property.name]) {
                     continue;
                 }
-                [_classPropertyIgnoreNames addObject:property.name];
+                if (property.name) {
+                    [_classPropertyIgnoreNames addObject:property.name];
+                }
             } else {
                 if ([_instancePropertyIgnoreNames containsObject:property.name]) {
                     continue;
                 }
-                [_instancePropertyIgnoreNames addObject:property.name];
+                if (property.name) {
+                    [_instancePropertyIgnoreNames addObject:property.name];
+                }
             }
         }
         
@@ -129,14 +133,18 @@
             if ([_classMethodIgnoreNames containsObject:classMethod.name]) {
                 continue;
             }
-            [_classMethodIgnoreNames addObject:classMethod.name];
+            if (classMethod.name) {
+                [_classMethodIgnoreNames addObject:classMethod.name];
+            }
         }
         
         for (CDOCMethod *instanceMethod in superClassObject.instanceMethods) {
             if ([_instanceMethodIgnoreNames containsObject:instanceMethod.name]) {
                 continue;
             }
-            [_instanceMethodIgnoreNames addObject:instanceMethod.name];
+            if (instanceMethod.name) {
+                [_instanceMethodIgnoreNames addObject:instanceMethod.name];
+            }
         }
         
         superClassObject = superClassObject.superClassRef.classObject;
