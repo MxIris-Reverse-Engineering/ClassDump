@@ -138,11 +138,19 @@
 - (void)addProperty:(CDOCProperty *)property; {
     [_properties addObject:property];
     if (property.isClass) {
-        [_classPropertySynthesizedMethodNames addObject:property.getter];
-        [_classPropertySynthesizedMethodNames addObject:property.setter];
+        if (property.getter) {
+            [_classPropertySynthesizedMethodNames addObject:property.getter];
+        }
+        if (property.setter) {
+            [_classPropertySynthesizedMethodNames addObject:property.setter];
+        }
     } else {
-        [_instancePropertySynthesizedMethodNames addObject:property.getter];
-        [_instancePropertySynthesizedMethodNames addObject:property.setter];
+        if (property.getter) {
+            [_instancePropertySynthesizedMethodNames addObject:property.getter];
+        }
+        if (property.setter) {
+            [_instancePropertySynthesizedMethodNames addObject:property.setter];
+        }
     }
 }
 
