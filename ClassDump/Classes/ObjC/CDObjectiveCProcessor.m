@@ -145,15 +145,15 @@
             CDLogInfo(@"end of the line!");
             exit(0);
         }
-        if (!_shallow) {
+//        if (!_shallow) {
             [self loadProtocols];
             [self.protocolUniquer createUniquedProtocols];
-        }
+//        }
         // Load classes before categories, so we can get a dictionary of classes by address.
         [self loadClasses];
-        if (!_shallow) {
+//        if (!_shallow) {
             [self loadCategories];
-        }
+//        }
     }
 }
 

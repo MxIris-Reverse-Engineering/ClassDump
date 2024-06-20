@@ -9,28 +9,12 @@
 
 // This generates separate files for each class.  Files are created in the 'outputPath' directory.
 
-@protocol CDProtocolFileNameFormatter <NSObject>
 
-- (NSString *)stringForProtocolName:(NSString *)protocolName;
-
-@end
-
-@protocol CDCategoryFileNameFormatter <NSObject>
-
-- (NSString *)stringForClassName:(NSString *)className categoryName:(NSString *)categoryName;
-
-@end
 
 
 @interface CDMultiFileVisitor : CDTextClassDumpVisitor <CDTypeControllerDelegate>
 
-@property BOOL shouldAppendHeader;
 
-@property NSString *preferredStructureFileName;
-
-@property (weak) id<CDProtocolFileNameFormatter> protocolFileNameFormatter;
-
-@property (weak) id<CDCategoryFileNameFormatter> categoryFileNameFormatter;
 
 @property (strong) NSString *outputPath;
 

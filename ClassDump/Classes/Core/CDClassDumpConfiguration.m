@@ -72,8 +72,8 @@
     self.shouldStripSynthesized = configuration.shouldStripSynthesized;
     self.shouldStripCtor = configuration.shouldStripCtor;
     self.shouldStripDtor = configuration.shouldStripDtor;
-    self.stopAfterPreProcessor = configuration.stopAfterPreProcessor;
-    self.shallow = configuration.shallow;
+//    self.stopAfterPreProcessor = configuration.stopAfterPreProcessor;
+//    self.shallow = configuration.shallow;
     self.shouldUseBOOLTypedef = configuration.shouldUseBOOLTypedef;
     self.shouldUseNSIntegerTypedef = configuration.shouldUseNSIntegerTypedef;
     self.shouldUseNSUIntegerTypedef = configuration.shouldUseNSUIntegerTypedef;
@@ -82,6 +82,10 @@
     self.sdkRoot = configuration.sdkRoot;
     self.regularExpression = configuration.regularExpression;
     self.sortedPropertyAttributeTypes = configuration.sortedPropertyAttributeTypes;
+    self.shouldGenerateEmptyImplementationFile = configuration.shouldGenerateEmptyImplementationFile;
+    self.preferredStructureFilename = configuration.preferredStructureFilename;
+    self.protocolFilenameFormatter = configuration.protocolFilenameFormatter;
+    self.categoryFilenameFormatter = configuration.categoryFilenameFormatter;
 }
 
 @end
