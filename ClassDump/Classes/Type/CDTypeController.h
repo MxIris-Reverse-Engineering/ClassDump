@@ -22,9 +22,7 @@
 @property (readonly) CDTypeFormatter *propertyTypeFormatter;
 @property (readonly) CDTypeFormatter *structDeclarationTypeFormatter;
 
-@property (readonly) BOOL shouldShowIvarOffsets;
-@property (readonly) BOOL shouldShowMethodAddresses;
-@property (readonly) BOOL targetArchUses64BitABI;
+@property BOOL targetArchUses64BitABI;
 
 @property (readonly) BOOL hasUnknownFunctionPointers;
 @property (readonly) BOOL hasUnknownBlocks;

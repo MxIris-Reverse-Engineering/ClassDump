@@ -10,6 +10,8 @@
 #import <ClassDump/CDTypeParser.h>
 #import <ClassDump/CDTypeController.h>
 #import <ClassDump/ClassDumpUtils.h>
+#import <ClassDump/CDClassDumpConfiguration.h>
+
 @implementation CDOCMethod
 {
     NSString *_name;
@@ -83,7 +85,7 @@
     if (formattedString != nil) {
         [resultString appendString:formattedString];
         [resultString appendString:@";"];
-        if (typeController.shouldShowMethodAddresses && self.address != 0) {
+        if (typeController.configuration.shouldShowMethodAddresses && self.address != 0) {
             if (typeController.targetArchUses64BitABI)
                 [resultString appendFormat:@"\t// IMP=0x%016lx", self.address];
             else

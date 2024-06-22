@@ -36,7 +36,8 @@ extern NSString *CDErrorDomain_ClassDump;
 extern NSString *CDErrorKey_Exception;
 
 @interface CDClassDump : NSObject
-
+@property CDArch targetArch;
+@property (copy, nullable) NSString *sdkRoot;
 @property (strong, readonly) CDClassDumpConfiguration *configuration;
 @property (readonly) NSArray<CDMachOFile *> *machOFiles;
 @property (readonly) NSArray<CDObjectiveCProcessor *> *objcProcessors;

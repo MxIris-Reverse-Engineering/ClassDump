@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <ClassDump/CDOCPropertyAttribute.h>
 #import <ClassDump/CDFatArch.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol CDProtocolFilenameFormatter <NSObject>
@@ -22,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface CDClassDumpConfiguration : NSObject
+@interface CDClassDumpConfiguration : NSObject <NSCopying, NSSecureCoding>
 
 @property BOOL shouldProcessRecursively;
 @property BOOL shouldSortClasses;
@@ -35,22 +36,21 @@ NS_ASSUME_NONNULL_BEGIN
 @property BOOL shouldStripSynthesized;
 @property BOOL shouldStripCtor;
 @property BOOL shouldStripDtor;
-//@property BOOL stopAfterPreProcessor;
-//@property BOOL shallow;
 @property BOOL shouldUseBOOLTypedef;
 @property BOOL shouldUseNSIntegerTypedef;
 @property BOOL shouldUseNSUIntegerTypedef;
-@property BOOL shouldUseStrongPropertyAttribute; /// replace @c retain to @c strong
+/// replace @c retain to @c strong
+@property BOOL shouldUseStrongPropertyAttribute;
 @property BOOL shouldGenerateEmptyImplementationFile;
-@property CDArch targetArch;
-@property (copy, nullable) NSString *sdkRoot;
-@property (copy, nullable) NSRegularExpression *regularExpression;
-@property (copy, nullable) NSArray<CDOCPropertyAttributeType> *sortedPropertyAttributeTypes;
-@property (copy, readonly, nullable) NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights;
+
+//@property (copy, nullable) NSRegularExpression *regularExpression;
+@property (copy) NSArray<CDOCPropertyAttributeType> *sortedPropertyAttributeTypes;
+
+@property (copy, readonly) NSDictionary<CDOCPropertyAttributeType, NSNumber *> *propertyAttributeTypeWeights;
 
 @property (copy, nullable) NSString *preferredStructureFilename;
-@property (weak) id<CDProtocolFilenameFormatter> protocolFilenameFormatter;
-@property (weak) id<CDCategoryFilenameFormatter> categoryFilenameFormatter;
+@property (weak, nullable) id<CDProtocolFilenameFormatter> protocolFilenameFormatter;
+@property (weak, nullable) id<CDCategoryFilenameFormatter> categoryFilenameFormatter;
 
 - (BOOL)shouldShowName:(NSString *)name;
 - (void)applyConfiguration:(CDClassDumpConfiguration *)configuration;

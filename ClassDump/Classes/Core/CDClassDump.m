@@ -37,6 +37,8 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
     NSMutableArray<CDObjectiveCProcessor *> *_objcProcessors;
 }
 
+@synthesize targetArch = _targetArch;
+
 - (instancetype)init;
 {
     if ((self = [super init])) {
@@ -51,7 +53,8 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
         _typeController = [[CDTypeController alloc] initWithConfiguration:_configuration];
         
         // These can be ppc, ppc7400, ppc64, i386, x86_64
-        
+        _targetArch.cputype = CPU_TYPE_ANY;
+        _targetArch.cpusubtype = 0;
     }
     
     return self;
@@ -93,13 +96,13 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
 {
     CDLogInfo(@"loadFile: %@", file);
     //CDLog(@"targetArch: (%08x, %08x)", targetArch.cputype, targetArch.cpusubtype);
-    CDMachOFile *machOFile = [file machOFileWithArch:_configuration.targetArch];
+    CDMachOFile *machOFile = [file machOFileWithArch:_targetArch];
     //CDLog(@"machOFile: %@", machOFile);
     if (machOFile == nil) {
         if (error != NULL) {
             NSString *failureReason;
-            NSString *targetArchName = CDNameForCPUType(_configuration.targetArch.cputype, _configuration.targetArch.cpusubtype);
-            if ([file isKindOfClass:[CDFatFile class]] && [(CDFatFile *)file containsArchitecture:_configuration.targetArch]) {
+            NSString *targetArchName = CDNameForCPUType(_targetArch.cputype, _targetArch.cpusubtype);
+            if ([file isKindOfClass:[CDFatFile class]] && [(CDFatFile *)file containsArchitecture:_targetArch]) {
                 failureReason = [NSString stringWithFormat:@"Fat file doesn't contain a valid Mach-O file for the specified architecture (%@).  "
                                  "It probably means that class-dump was run on a static library, which is not supported.", targetArchName];
             } else {
@@ -202,8 +205,8 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
             adjustedName = name;
             //CDLog(@"Did not find it.");
         }
-    } else if (_configuration.sdkRoot != nil) {
-        adjustedName = [_configuration.sdkRoot stringByAppendingPathComponent:name];
+    } else if (_sdkRoot != nil) {
+        adjustedName = [_sdkRoot stringByAppendingPathComponent:name];
     } else {
         adjustedName = name;
     }
@@ -236,9 +239,9 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
     [resultString appendString:@"//  Copyright (C) 1997-2019 Steve Nygard. Updated in 2022 by Kevin Bradley.\n"];
     [resultString appendString:@"//\n\n"];
     
-    if (_configuration.sdkRoot != nil) {
+    if (_sdkRoot != nil) {
         [resultString appendString:@"//\n"];
-        [resultString appendFormat:@"// SDK Root: %@\n", _configuration.sdkRoot];
+        [resultString appendFormat:@"// SDK Root: %@\n", _sdkRoot];
         [resultString appendString:@"//\n\n"];
     }
 }
@@ -266,6 +269,25 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
         [[[self.machOFiles lastObject] loadCommandString:YES] print];
     }
 }
+
+#pragma mark - Setters
+
+- (void)setTargetArch:(CDArch)targetArch {
+    @synchronized (self) {
+        _targetArch = targetArch;
+        _typeController.targetArchUses64BitABI = CDArchUses64BitABI(_targetArch);
+    }
+}
+
+#pragma mark - Getters
+
+- (CDArch)targetArch {
+    @synchronized (self) {
+        return _targetArch;
+    }
+}
+
+#pragma mark -
 
 - (void)dealloc {
     CDLog(@"CDClassDump is dealloc");
@@ -300,7 +322,7 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
             return nil;
         }
         //CDLog(@"No arch specified, best match for local arch is: (%08x, %08x)", targetArch.cputype, targetArch.cpusubtype);
-        classDump.configuration.targetArch = targetArch;
+        classDump.targetArch = targetArch;
         classDump.searchPathState.executablePath = [executablePath stringByDeletingLastPathComponent];
         NSError *error;
         if (![classDump loadFile:file error:&error]) {
@@ -333,9 +355,7 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
             
             return NO;
         }
-        CDArch targetArch = classDump.configuration.targetArch;
         [classDump->_configuration applyConfiguration:configuration];
-        classDump.configuration.targetArch = targetArch;
 //        classDump->_configuration = configuration;
 //        classDump.shouldProcessRecursively = configuration.shouldProcessRecursively;
 //        classDump.shouldSortClasses = configuration.shouldSortClasses;

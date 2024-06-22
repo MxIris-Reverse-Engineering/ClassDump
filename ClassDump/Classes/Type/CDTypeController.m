@@ -99,10 +99,10 @@
     return _configuration.shouldShowMethodAddresses;
 }
 
-- (BOOL)targetArchUses64BitABI;
-{
-    return CDArchUses64BitABI(_configuration.targetArch);
-}
+//- (BOOL)targetArchUses64BitABI;
+//{
+//    return CDArchUses64BitABI(_configuration.targetArch);
+//}
 
 #pragma mark -
 

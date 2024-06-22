@@ -6,7 +6,7 @@
 #import <Foundation/Foundation.h>
 #include <mach/machine.h> // For cpu_type_t, cpu_subtype_t
 
-typedef struct {
+typedef struct __attribute__((objc_boxable)) {
     cpu_type_t cputype;
     cpu_subtype_t cpusubtype;
 } CDArch;

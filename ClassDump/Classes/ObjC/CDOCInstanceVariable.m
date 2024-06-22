@@ -10,6 +10,7 @@
 #import <ClassDump/CDTypeController.h>
 #import <ClassDump/CDType.h>
 #import <ClassDump/ClassDumpUtils.h>
+#import <ClassDump/CDClassDumpConfiguration.h>
 
 @interface CDOCInstanceVariable ()
 @property (assign) BOOL hasParsedType;
@@ -84,7 +85,7 @@
         NSParameterAssert(formattedString != nil);
         [resultString appendString:formattedString];
         [resultString appendString:@";"];
-        if ([typeController shouldShowIvarOffsets]) {
+        if (typeController.configuration.shouldShowIvarOffsets) {
             [resultString appendFormat:@"\t// %ld = 0x%lx", self.offset, self.offset];
         }
     }
