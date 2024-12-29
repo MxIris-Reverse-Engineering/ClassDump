@@ -9,12 +9,7 @@
 
 // This generates separate files for each class.  Files are created in the 'outputPath' directory.
 
-
-
-
-@interface CDMultiFileVisitor : CDTextClassDumpVisitor <CDTypeControllerDelegate>
-
-
+@interface CDMultipleFileVisitor : CDTextClassDumpVisitor <CDTypeControllerDelegate>
 
 @property (strong) NSString *outputPath;
 

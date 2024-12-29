@@ -59,7 +59,7 @@ FOUNDATION_EXPORT const unsigned char ClassDumpVersionString[];
 #import <ClassDump/CDMachOFile.h>
 #import <ClassDump/CDMachOFileDataCursor.h>
 #import <ClassDump/CDMethodType.h>
-#import <ClassDump/CDMultiFileVisitor.h>
+#import <ClassDump/CDMultipleFileVisitor.h>
 #import <ClassDump/CDObjectiveC1Processor.h>
 #import <ClassDump/CDObjectiveC2Processor.h>
 #import <ClassDump/CDObjectiveCProcessor.h>

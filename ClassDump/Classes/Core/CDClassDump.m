@@ -375,7 +375,7 @@ NSString *CDErrorKey_Exception    = @"CDErrorKey_Exception";
         
         [classDump processObjectiveCData];
         [classDump registerTypes];
-        CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
+        CDMultipleFileVisitor *multiFileVisitor = [[CDMultipleFileVisitor alloc] init]; // -H
         multiFileVisitor.classDump = classDump;
         multiFileVisitor.outputPath = outputPath;
         classDump.typeController.delegate = multiFileVisitor;

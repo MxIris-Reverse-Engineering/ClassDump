@@ -80,7 +80,7 @@
     [classDump.configuration applyConfiguration:configuration];
     [classDump processObjectiveCData];
     [classDump registerTypes];
-    CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
+    CDMultipleFileVisitor *multiFileVisitor = [[CDMultipleFileVisitor alloc] init]; // -H
     multiFileVisitor.classDump = classDump;
     multiFileVisitor.outputPath = dumpToURL.path;
     classDump.typeController.delegate = multiFileVisitor;
@@ -104,7 +104,7 @@
 //        classDump.verbose = YES;
 //        [classDump processObjectiveCData];
 //        [classDump registerTypes];
-//        CDMultiFileVisitor *multiFileVisitor = [[CDMultiFileVisitor alloc] init]; // -H
+//        CDMultipleFileVisitor *multiFileVisitor = [[CDMultipleFileVisitor alloc] init]; // -H
 //        multiFileVisitor.classDump = classDump;
 //        multiFileVisitor.outputPath = dumpToURL.path;
 //        classDump.typeController.delegate = multiFileVisitor;

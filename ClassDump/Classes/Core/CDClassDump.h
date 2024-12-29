@@ -10,7 +10,7 @@
 #import <ClassDump/CDFile.h> // For CDArch
 #import <ClassDump/CDFindMethodVisitor.h>
 #import <ClassDump/CDMachOFile.h>
-#import <ClassDump/CDMultiFileVisitor.h>
+#import <ClassDump/CDMultipleFileVisitor.h>
 #import <ClassDump/CDSearchPathState.h>
 #import <ClassDump/CDOCPropertyAttribute.h>
 #import <Foundation/Foundation.h>

@@ -5,7 +5,7 @@
 
 #import <ClassDump/CDClassDump.h>
 #import <ClassDump/CDClassFrameworkVisitor.h>
-#import <ClassDump/CDMultiFileVisitor.h>
+#import <ClassDump/CDMultipleFileVisitor.h>
 #import <ClassDump/CDOCCategory.h>
 #import <ClassDump/CDOCClass.h>
 #import <ClassDump/CDOCInstanceVariable.h>
@@ -14,7 +14,7 @@
 #import <ClassDump/ClassDumpUtils.h>
 #import <ClassDump/CDClassDumpConfiguration.h>
 
-@interface CDMultiFileVisitor ()
+@interface CDMultipleFileVisitor ()
 
 // NSString (class name) -> NSString (framework name)
 @property (strong) NSDictionary *frameworkNamesByClassName;
@@ -45,7 +45,7 @@
 
 #pragma mark -
 
-@implementation CDMultiFileVisitor
+@implementation CDMultipleFileVisitor
 
 - (instancetype)init {
     if ((self = [super init])) {
@@ -255,6 +255,11 @@
 #pragma mark -
 
 - (NSString *)frameworkForClassName:(NSString *)name; {
+    
+    if ([name isEqualToString:@"NSObject"]) {
+        return @"Foundation";
+    }
+    
     NSString *framework = self.frameworkNamesByClassName[name];
 
     // Map public CoreFoundation classes to Foundation, because that is where the headers are exposed
@@ -273,6 +278,10 @@
     if (name != nil) {
         NSString *framework = [self frameworkForClassName:name];
 
+        if ([@[@"Foundation", @"AppKit", @"UIKit"] containsObject:framework]) {
+            name = framework;
+        }
+        
         if (framework == nil) {
             return [NSString stringWithFormat:@"#import \"%@.h\"\n", name];
         } else {
